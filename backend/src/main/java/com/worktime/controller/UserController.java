@@ -1,6 +1,6 @@
 package com.worktime.controller;
 
-import com.worktime.entity.User;
+import com.worktime.dto.UserResponse;
 import com.worktime.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 }

@@ -1,6 +1,6 @@
 package com.worktime.service;
 
-import com.worktime.entity.User;
+import com.worktime.dto.UserResponse;
 import com.worktime.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getRole(),
+                        user.isActive()
+                ))
+                .toList();
     }
 }
