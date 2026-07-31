@@ -33,6 +33,15 @@ public class ProjectService{
     }
 
     public ProjectResponse createProject(CreateProjectRequest request) {
+        if (request.getStartDate() != null
+                && request.getEndDate() != null
+                && request.getEndDate().isBefore(request.getStartDate())) {
+
+            throw new IllegalArgumentException(
+                    "End date cannot be before start date."
+            );
+        }
+
         Project project = Project.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -47,6 +56,15 @@ public class ProjectService{
     }
 
     public ProjectResponse updateProject(Long id, UpdateProjectRequest request) {
+        if (request.getStartDate() != null
+                && request.getEndDate() != null
+                && request.getEndDate().isBefore(request.getStartDate())) {
+
+            throw new IllegalArgumentException(
+                    "End date cannot be before start date."
+            );
+        }
+        
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 

@@ -26,6 +26,14 @@ public class Task {
 
     private LocalDate dueDate;
 
+    @Column
+    private Integer estimatedDurationMinutes;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false)
+    private TaskPriority priority = TaskPriority.MEDIUM;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;

@@ -1,5 +1,6 @@
 package com.worktime.dto;
 
+import com.worktime.entity.TaskPriority;
 import com.worktime.entity.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,8 @@ public class TaskResponse {
     private String title;
     private String description;
     private LocalDate dueDate;
+    private Integer estimatedDurationMinutes;
+    private TaskPriority priority;
     private TaskStatus status;
 
     private Long projectId;

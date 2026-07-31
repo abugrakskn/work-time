@@ -4,6 +4,7 @@ import com.worktime.dto.CreateProjectRequest;
 import com.worktime.dto.ProjectResponse;
 import com.worktime.dto.UpdateProjectRequest;
 import com.worktime.service.ProjectService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class ProjectController {
 
     @PostMapping
     public ProjectResponse createProject(
-            @RequestBody CreateProjectRequest request
+            @Valid @RequestBody CreateProjectRequest request
     ) {
         return projectService.createProject(request);
     }
@@ -38,7 +39,7 @@ public class ProjectController {
     @PutMapping("/{id}")
     public ProjectResponse updateProject(
             @PathVariable Long id,
-            @RequestBody UpdateProjectRequest request
+            @Valid @RequestBody UpdateProjectRequest request
     ) {
         return projectService.updateProject(id, request);
     }
