@@ -1,11 +1,13 @@
 package com.worktime.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,6 +59,21 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(
+            AuthenticationException exception
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.UNAUTHORIZED.value());
+        response.put("error", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        response.put("message", "Invalid email or password");
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFound(
             ResourceNotFoundException exception
@@ -88,4 +105,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(response);
     }
+
+
 }
