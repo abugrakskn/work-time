@@ -107,8 +107,8 @@ public class UserService {
         return toResponse(updatedUser);
     }
 
-    public void changePassword(Long id, ChangePasswordRequest request) {
-        User user = userRepository.findById(id)
+    public void changePassword(String email, ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
         if (!passwordEncoder.matches(
@@ -121,13 +121,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
-    }
-
-    public void deleteUser(Long id){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
-
-        userRepository.delete(user);
     }
 
     private UserResponse toResponse(User user){

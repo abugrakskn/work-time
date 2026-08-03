@@ -33,7 +33,6 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/api/auth/login"
                 ).permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf
