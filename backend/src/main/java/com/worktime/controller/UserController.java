@@ -82,33 +82,4 @@ public class UserController {
         return userService.patchUser(id, request);
     }
 
-    @PatchMapping("/{id}/password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Change the users password",
-                description = "Change the users password")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204",
-                    description = "Password changed successfully"),
-            @ApiResponse(responseCode = "404",
-                    description = "User not found")
-    })
-    public void changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request){
-        userService.changePassword(id, request);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a user",
-            description = "Deletes the user with the specified ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204",
-                    description = "User deleted successfully"),
-            @ApiResponse(responseCode = "400",
-                    description = "Current password is incorrect or password data is invalid"),
-            @ApiResponse(responseCode = "404",
-                    description = "User not found")
-    })
-    public void deleteUser(@PathVariable Long id){
-        userService.deleteUser(id);
-    }
 }

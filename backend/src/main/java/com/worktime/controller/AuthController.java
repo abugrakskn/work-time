@@ -1,5 +1,6 @@
 package com.worktime.controller;
 
+import com.worktime.dto.ChangePasswordRequest;
 import com.worktime.dto.LoginRequest;
 import com.worktime.dto.UserResponse;
 import com.worktime.service.UserService;
@@ -69,7 +70,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401",
                         description = "Invalid email or password")
     })
-    public void Login(
+    public void login(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
@@ -94,5 +95,27 @@ public class AuthController {
                 httpRequest,
                 httpResponse
         );
+    }
+
+    @PatchMapping("/me/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Change current user's password",
+                description = "Changes the password of the currently authenticated user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204",
+                        description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400",
+                        description = "Invalid password"),
+            @ApiResponse(responseCode = "401",
+                        description = "Authentication required")
+    })
+    public void changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request
+            ){
+            userService.changePassword(
+                    authentication.getName(),
+                    request
+            );
     }
 }
