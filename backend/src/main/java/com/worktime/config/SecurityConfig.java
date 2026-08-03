@@ -2,11 +2,11 @@ package com.worktime.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,11 +35,10 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
         )
+        .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**"))
         .securityContext(context -> context
                 .securityContextRepository(securityContextRepository)
-        )
-        .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**")
         )
         .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(
