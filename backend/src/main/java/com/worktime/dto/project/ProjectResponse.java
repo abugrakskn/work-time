@@ -1,4 +1,4 @@
-package com.worktime.dto;
+package com.worktime.dto.project;
 
 import com.worktime.entity.ProjectStatus;
 import io.swagger.v3.oas.annotations.media.Schema;

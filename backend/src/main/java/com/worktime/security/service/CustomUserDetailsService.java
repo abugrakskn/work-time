@@ -1,4 +1,4 @@
-package com.worktime.service;
+package com.worktime.security.service;
 
 import com.worktime.entity.User;
 import com.worktime.repository.UserRepository;

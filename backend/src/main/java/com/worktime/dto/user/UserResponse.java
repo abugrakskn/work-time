@@ -1,4 +1,4 @@
-package com.worktime.dto;
+package com.worktime.dto.user;
 
 import com.worktime.entity.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,9 +1,8 @@
 package com.worktime.controller;
 
-import com.worktime.dto.ChangePasswordRequest;
-import com.worktime.dto.CreateUserRequest;
-import com.worktime.dto.UpdateUserRequest;
-import com.worktime.dto.UserResponse;
+import com.worktime.dto.user.CreateUserRequest;
+import com.worktime.dto.user.UpdateUserRequest;
+import com.worktime.dto.user.UserResponse;
 import com.worktime.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -81,5 +80,4 @@ public class UserController {
     public UserResponse patchUser(@PathVariable Long id,@Valid @RequestBody UpdateUserRequest request){
         return userService.patchUser(id, request);
     }
-
 }

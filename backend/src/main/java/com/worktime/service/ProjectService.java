@@ -1,8 +1,8 @@
 package com.worktime.service;
 
-import com.worktime.dto.CreateProjectRequest;
-import com.worktime.dto.ProjectResponse;
-import com.worktime.dto.UpdateProjectRequest;
+import com.worktime.dto.project.CreateProjectRequest;
+import com.worktime.dto.project.ProjectResponse;
+import com.worktime.dto.project.UpdateProjectRequest;
 import com.worktime.entity.Project;
 import com.worktime.repository.ProjectRepository;
 import org.springframework.stereotype.Service;

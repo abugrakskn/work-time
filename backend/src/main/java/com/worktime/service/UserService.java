@@ -1,9 +1,9 @@
 package com.worktime.service;
 
-import com.worktime.dto.ChangePasswordRequest;
-import com.worktime.dto.CreateUserRequest;
-import com.worktime.dto.UpdateUserRequest;
-import com.worktime.dto.UserResponse;
+import com.worktime.dto.auth.ChangePasswordRequest;
+import com.worktime.dto.user.CreateUserRequest;
+import com.worktime.dto.user.UpdateUserRequest;
+import com.worktime.dto.user.UserResponse;
 import com.worktime.entity.User;
 import com.worktime.exception.DuplicateResourceException;
 import com.worktime.exception.ResourceNotFoundException;

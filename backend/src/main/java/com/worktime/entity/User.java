@@ -36,6 +36,10 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    public boolean isAdmin() {
+        return this.role == UserRole.ADMIN;
+    }
+
     @Column(nullable = false)
     private boolean active;
 }

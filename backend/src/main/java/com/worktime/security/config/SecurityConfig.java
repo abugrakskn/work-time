@@ -1,5 +1,6 @@
-package com.worktime.config;
+package com.worktime.security.config;
 
+import com.worktime.security.handler.SecurityErrorResponseWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,9 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+
+import java.time.LocalDateTime;
 
 @Configuration
 public class SecurityConfig {
@@ -22,7 +24,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            SecurityContextRepository securityContextRepository
+            SecurityContextRepository securityContextRepository,
+            SecurityErrorResponseWriter securityErrorResponseWriter
     ) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
@@ -33,16 +36,51 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/api/auth/login"
                 ).permitAll()
+
+
+                .requestMatchers("/api/users/**")
+                .hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET,"/api/projects/**")
+                .hasAnyRole("ADMIN","EMPLOYEE")
+
+                .requestMatchers("/api/projects/**")
+                .hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET,"/api/tasks/**")
+                .hasAnyRole("ADMIN","EMPLOYEE")
+
+                .requestMatchers(HttpMethod.PATCH, "/api/tasks/*/status")
+                .hasAnyRole("ADMIN","EMPLOYEE")
+
+                .requestMatchers("/api/tasks/**")
+                .hasRole("ADMIN")
+
+
                 .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**"))
+                .ignoringRequestMatchers("/api/**")
+        )
         .securityContext(context -> context
                 .securityContextRepository(securityContextRepository)
         )
         .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(
-                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                        (request, response, authException)
+                        -> securityErrorResponseWriter.write(
+                                response,
+                                HttpStatus.UNAUTHORIZED,
+                                "Authentication is required to access this resource"
+                        )
+                )
+                .accessDeniedHandler(
+                        (request, response, accessDeniedException)
+                                -> securityErrorResponseWriter.write(
+                                        response,
+                                HttpStatus.FORBIDDEN,
+                                "You do not have permission to access this resource"
+                        )
                 )
         );
 

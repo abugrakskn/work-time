@@ -1,8 +1,10 @@
 package com.worktime.controller;
 
-import com.worktime.dto.CreateTaskRequest;
-import com.worktime.dto.TaskResponse;
-import com.worktime.dto.UpdateTaskRequest;
+import com.worktime.dto.task.CreateTaskRequest;
+import com.worktime.dto.task.TaskResponse;
+import com.worktime.dto.task.UpdateTaskRequest;
+import com.worktime.dto.task.UpdateTaskStatusRequest;
+import com.worktime.repository.UserRepository;
 import com.worktime.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +24,14 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRepository userRepository;
 
-    public TaskController(TaskService taskService){
+    public TaskController(
+            TaskService taskService,
+            UserRepository userRepository
+    ){
         this.taskService = taskService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -31,8 +39,8 @@ public class TaskController {
                 description = "Returns all tasks in the system")
     @ApiResponse(responseCode = "200",
             description = "Tasks retrieved successfully")
-    public List<TaskResponse> getAllTasks(){
-        return taskService.getAllTasks();
+    public List<TaskResponse> getAllTasks(Authentication authentication){
+        return taskService.getAllTasks(authentication.getName());
     }
 
     @GetMapping("/{id}")
@@ -44,8 +52,8 @@ public class TaskController {
             @ApiResponse(responseCode = "404",
                         description = "Task not found")
     })
-    public TaskResponse getTaskById(@PathVariable Long id){
-        return taskService.getTaskById(id);
+    public TaskResponse getTaskById(@PathVariable Long id, Authentication authentication){
+        return taskService.getTaskById(id, authentication.getName());
     }
 
     @PostMapping
@@ -78,6 +86,29 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskRequest request
     ) {
         return taskService.updateTask(id, request);
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update task status",
+            description = "Update the status of the task with specified ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Task status updated successfully"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid task status"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "403",
+                    description = "User does not have permission to update this task"),
+            @ApiResponse(responseCode = "404",
+                    description = "Task not found")
+    })
+    public TaskResponse updateTaskStatus(
+            @PathVariable Long id,
+            Authentication authentication,
+            @Valid @RequestBody UpdateTaskStatusRequest request
+    ) {
+        return taskService.updateTaskStatus(id, authentication.getName(), request);
     }
 
     @DeleteMapping("/{id}")
