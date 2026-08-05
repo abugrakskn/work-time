@@ -133,7 +133,7 @@ public class TaskService {
 
         task.setStatus(request.getStatus());
         Task updatedTask = taskRepository.save(task);
-        return toResponse(task);
+        return toResponse(updatedTask);
     }
 
     public void deleteTask(Long id){
