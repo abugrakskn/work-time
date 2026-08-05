@@ -1,4 +1,4 @@
-package com.worktime.dto;
+package com.worktime.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -20,7 +20,7 @@ public class LoginRequest {
     private String email;
 
     @Schema(description = "Password used for authentication",
-            example = "SecurePassword123")
+            example = "SecurePassword123!")
     @NotBlank(message = "Password cannot be blank")
     private String password;
 }

@@ -1,8 +1,8 @@
 package com.worktime.controller;
 
-import com.worktime.dto.CreateProjectRequest;
-import com.worktime.dto.ProjectResponse;
-import com.worktime.dto.UpdateProjectRequest;
+import com.worktime.dto.project.CreateProjectRequest;
+import com.worktime.dto.project.ProjectResponse;
+import com.worktime.dto.project.UpdateProjectRequest;
 import com.worktime.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

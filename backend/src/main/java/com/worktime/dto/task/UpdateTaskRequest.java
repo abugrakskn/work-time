@@ -1,4 +1,4 @@
-package com.worktime.dto;
+package com.worktime.dto.task;
 
 import com.worktime.entity.TaskPriority;
 import com.worktime.entity.TaskStatus;

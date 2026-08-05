@@ -1,7 +1,8 @@
 package com.worktime.controller;
 
-import com.worktime.dto.LoginRequest;
-import com.worktime.dto.UserResponse;
+import com.worktime.dto.auth.ChangePasswordRequest;
+import com.worktime.dto.auth.LoginRequest;
+import com.worktime.dto.user.UserResponse;
 import com.worktime.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,7 +57,6 @@ public class AuthController {
         return userService.getUserByEmail(authentication.getName());
     }
 
-
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Log in",
@@ -93,6 +93,30 @@ public class AuthController {
                 securityContext,
                 httpRequest,
                 httpResponse
+        );
+    }
+
+    @PatchMapping("/me/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Change current user's password",
+            description = "Changes the password of the currently authenticated user"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204",
+                    description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400",
+                    description = "Current password is incorrect or password data is invalid"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required")
+    })
+    public void changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        userService.changePassword(
+                authentication.getName(),
+                request
         );
     }
 }

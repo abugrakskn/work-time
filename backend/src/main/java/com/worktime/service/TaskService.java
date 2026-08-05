@@ -1,8 +1,9 @@
 package com.worktime.service;
 
-import com.worktime.dto.CreateTaskRequest;
-import com.worktime.dto.TaskResponse;
-import com.worktime.dto.UpdateTaskRequest;
+import com.worktime.dto.task.CreateTaskRequest;
+import com.worktime.dto.task.TaskResponse;
+import com.worktime.dto.task.UpdateTaskRequest;
+import com.worktime.dto.task.UpdateTaskStatusRequest;
 import com.worktime.entity.*;
 import com.worktime.exception.ResourceNotFoundException;
 import com.worktime.repository.ProjectRepository;
@@ -11,6 +12,7 @@ import com.worktime.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -20,6 +22,11 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+
+    private User getCurrentUser(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+    }
 
     public TaskResponse createTask(CreateTaskRequest request){
         Project project = projectRepository
@@ -51,18 +58,33 @@ public class TaskService {
         return toResponse(createdTask);
     }
 
-    public List<TaskResponse> getAllTasks(){
-        return taskRepository.findAll()
-                .stream()
+    public List<TaskResponse> getAllTasks(String email){
+        User currentUser = getCurrentUser(email);
+        List<Task> tasks;
+
+        if (currentUser.isAdmin()){
+            tasks = taskRepository.findAll();
+        }else {
+            tasks = taskRepository.findByAssignedUser(currentUser);
+        }
+
+        return tasks.stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    public TaskResponse getTaskById(Long id){
+    public TaskResponse getTaskById(Long id, String email){
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
+        User currentUser = getCurrentUser(email);
 
-        return toResponse(task);
+        if (currentUser.isAdmin()){
+            return toResponse(task);
+        }
+        if (task.isAssignedTo(currentUser)) {
+            return toResponse(task);
+        }
+        throw new AccessDeniedException("You do not have permission to access this task");
     }
 
     public TaskResponse updateTask(Long id, UpdateTaskRequest request){
@@ -98,14 +120,28 @@ public class TaskService {
         return toResponse(updatedTask);
     }
 
+    public TaskResponse updateTaskStatus(Long id, String email, UpdateTaskStatusRequest request){
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
+        User currentUser = getCurrentUser(email);
+
+        if (!currentUser.isAdmin() && !task.isAssignedTo(currentUser)) {
+            throw new AccessDeniedException(
+                    "You do not have permission to update this task."
+            );
+        }
+
+        task.setStatus(request.getStatus());
+        Task updatedTask = taskRepository.save(task);
+        return toResponse(task);
+    }
+
     public void deleteTask(Long id){
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
 
         taskRepository.delete(task);
     }
-
-
 
     private TaskResponse toResponse(Task task){
         Project project = task.getProject();

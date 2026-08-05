@@ -1,52 +1,59 @@
-package com.worktime.dto;
+package com.worktime.dto.task;
 
 import com.worktime.entity.TaskPriority;
+import com.worktime.entity.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreateTaskRequest {
+public class TaskResponse {
+    @Schema(description = "Unique identifier of the task",
+            example = "1")
+    private Long id;
 
     @Schema(description = "Title of the task",
             example = "Implement JWT authentication")
-    @NotBlank(message = "Task title cannot be blank!")
-    @Size(max = 100, message = "Title cannot exceed 100 characters!")
     private String title;
 
     @Schema(description = "Detailed description of the task",
             example = "Implement JWT authentication and configure Spring Security")
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters!")
     private String description;
 
     @Schema(description = "Due date of the task",
-            example = "2026-08-01")
-    @FutureOrPresent(message = "Due date cannot be in the past!")
+            example = "2027-09-01")
     private LocalDate dueDate;
 
     @Schema(description = "Estimated duration of the task in minutes",
-            example = "120")
-    @Positive(message = "Estimated duration must be greater than zero!")
+            example = "180")
     private Integer estimatedDurationMinutes;
 
-    @Schema(description = "Priority level of the task (optional). Defaults to MEDIUM if not provided.",
+    @Schema(description = "Priority level of the task",
             example = "HIGH")
     private TaskPriority priority;
 
+    @Schema(description = "Current status of the project",
+            example = "IN_PROGRESS")
+    private TaskStatus status;
+
     @Schema(description = "ID of the project that the task belongs to",
             example = "1")
-    @NotNull(message = "Project ID is required!")
     private Long projectId;
 
-    @Schema(description = "ID of the user assigned to the task (optional)",
-            example = "2")
+    @Schema(description = "Name of the project that the task belongs to",
+            example = "WorkTime Backend")
+    private String projectName;
+
+    @Schema(description = "ID of the user assigned to the task",
+            example = "1",
+            nullable = true)
     private Long assignedUserId;
+
+    @Schema(description = "Name of the user assigned to the task",
+            example = "Ahmet Buğra Keskin",
+            nullable = true)
+    private String assignedUserName;
 }
