@@ -1,4 +1,117 @@
-<div class="page-header">
-  <h1>Tasks</h1>
-  <p>View and manage your assigned tasks.</p>
+<div class="tasks-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Tasks</h1>
+      <p>View and manage your assigned tasks.</p>
+    </div>
+  </div>
+
+  <div class="task-list">
+
+    @for (task of tasks(); track task.id) {
+
+      <mat-card class="task-card">
+
+        <div class="task-main">
+
+          <div class="task-info">
+
+            <div class="title-row">
+
+              <h2 class="task-title">
+                {{ task.title }}
+              </h2>
+
+              <span
+                class="status-badge"
+                [class]="getStatusClass(task.status)">
+                {{ task.status }}
+              </span>
+
+              <span
+                class="priority-badge"
+                [class]="getPriorityClass(task.priority)">
+                {{ task.priority }}
+              </span>
+
+            </div>
+
+            <div class="description-block">
+
+              <span class="field-label">
+                Description
+              </span>
+
+              <p class="description-text">
+                {{ task.description }}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="task-meta">
+
+            <div class="meta-item">
+              <span class="field-label">Project</span>
+
+              <strong>
+                {{ task.projectName }}
+              </strong>
+            </div>
+
+            <div class="meta-item">
+              <span class="field-label">Due Date</span>
+
+              <strong>
+                {{ task.dueDate }}
+              </strong>
+            </div>
+
+            <div class="meta-item">
+              <span class="field-label">Assigned To</span>
+
+              <strong>
+                {{ task.assignedUserName || 'Unassigned' }}
+              </strong>
+            </div>
+
+          </div>
+
+          <div class="task-actions">
+
+            <a
+              mat-stroked-button
+              class="details-button"
+              [routerLink]="['/tasks', task.id]">
+
+              <mat-icon>visibility</mat-icon>
+              View Details
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </mat-card>
+
+    } @empty {
+
+      <div class="empty-state">
+
+        <mat-icon>task_alt</mat-icon>
+
+        <div>
+          <h3>No tasks found</h3>
+          <p>There are currently no tasks available.</p>
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
 </div>

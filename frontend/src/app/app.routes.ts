@@ -8,6 +8,7 @@ import { CreateProject } from './features/projects/create-project/create-project
 import { ProjectDetail } from './features/projects/project-detail/project-detail';
 import { Tasks } from './features/tasks/tasks';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { TaskDetail } from './features/tasks/task-detail/task-detail';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
       {
         path: 'tasks',
         component: Tasks
+      },
+      {
+        path: 'tasks/:id',
+        component: TaskDetail
       },
       {
         path: 'projects',
