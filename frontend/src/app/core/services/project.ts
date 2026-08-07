@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { CreateProjectRequest } from '../models/create-project-request';
+import { UpdateProjectRequest } from '../models/update-project-request';
 import { Project } from '../models/project';
 
 @Injectable({
@@ -26,4 +27,11 @@ export class ProjectService {
   create(request: CreateProjectRequest) {
     return this.http.post<Project>(this.apiUrl, request);
   }
+
+  update(id: number, request: UpdateProjectRequest) {
+  return this.http.put<Project>(
+    `${this.apiUrl}/${id}`,
+    request
+  );
+}
 }

@@ -1,10 +1,132 @@
 <div class="tasks-page">
 
   <div class="page-header">
+
     <div>
       <h1>Tasks</h1>
       <p>View and manage your assigned tasks.</p>
     </div>
+
+    <a
+      mat-flat-button
+      routerLink="/tasks/create">
+      Create Task
+    </a>
+
+  </div>
+
+  <div class="filters">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Priority</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedPriority"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+          All Priorities
+        </mat-option>
+
+        <mat-option value="CRITICAL">
+          Critical
+        </mat-option>
+
+        <mat-option value="HIGH">
+          High
+        </mat-option>
+
+        <mat-option value="MEDIUM">
+          Medium
+        </mat-option>
+
+        <mat-option value="LOW">
+          Low
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedStatus"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+          All Statuses
+        </mat-option>
+
+        <mat-option value="TODO">
+          Todo
+        </mat-option>
+
+        <mat-option value="IN_PROGRESS">
+          In Progress
+        </mat-option>
+
+        <mat-option value="DONE">
+          Done
+        </mat-option>
+
+        <mat-option value="CANCELLED">
+          Cancelled
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Project</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedProject"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+         All Projects
+        </mat-option>
+
+        @for (project of getProjects(); track project) {
+          <mat-option [value]="project">
+            {{ project }}
+          </mat-option>
+        }
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Assigned User</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedAssignedUser"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+          All Users
+        </mat-option>
+
+        @for (user of getAssignedUsers(); track user) {
+          <mat-option [value]="user">
+            {{ user }}
+          </mat-option>
+        }
+
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="clearFilters()">
+
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear Filters
+
+    </button>
+
   </div>
 
   <div class="task-list">
@@ -54,7 +176,9 @@
           <div class="task-meta">
 
             <div class="meta-item">
-              <span class="field-label">Project</span>
+              <span class="field-label">
+                Project
+              </span>
 
               <strong>
                 {{ task.projectName }}
@@ -62,7 +186,9 @@
             </div>
 
             <div class="meta-item">
-              <span class="field-label">Due Date</span>
+              <span class="field-label">
+                Due Date
+              </span>
 
               <strong>
                 {{ task.dueDate }}
@@ -70,7 +196,9 @@
             </div>
 
             <div class="meta-item">
-              <span class="field-label">Assigned To</span>
+              <span class="field-label">
+                Assigned To
+              </span>
 
               <strong>
                 {{ task.assignedUserName || 'Unassigned' }}

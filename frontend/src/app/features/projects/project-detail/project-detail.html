@@ -3,13 +3,27 @@
   <div class="detail-page">
 
     <div class="top-actions">
-      <a
-        mat-button
-        routerLink="/projects">
+      <div class="top-actions">
 
-        <mat-icon>arrow_back</mat-icon>
-        Back to Projects
-      </a>
+  <a
+    mat-button
+    routerLink="/projects">
+
+    <mat-icon>arrow_back</mat-icon>
+    Back to Projects
+
+  </a>
+
+  <a
+  mat-stroked-button
+  [routerLink]="['/projects', project.id, 'edit']">
+
+  <mat-icon>edit</mat-icon>
+  Edit Project
+
+</a>
+
+</div>
     </div>
 
     <mat-card class="project-card">
@@ -54,25 +68,164 @@
 
       </div>
 
-      <div class="tasks-section">
+    <div class="tasks-section">
 
-        <div class="section-header">
-          <div>
-            <h2>Tasks</h2>
-            <p>Tasks associated with this project.</p>
+  <div class="section-header">
+
+  <div>
+    <h2>Tasks</h2>
+    <p>Tasks associated with this project.</p>
+  </div>
+
+  <div class="task-filters">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedTaskStatus"
+        (selectionChange)="applyTaskFilters()">
+
+        <mat-option value="">
+          All Statuses
+        </mat-option>
+
+        <mat-option value="IN_PROGRESS">
+          In Progress
+        </mat-option>
+
+        <mat-option value="TODO">
+          Todo
+        </mat-option>
+
+        <mat-option value="DONE">
+          Done
+        </mat-option>
+
+        <mat-option value="CANCELLED">
+          Cancelled
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Priority</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedTaskPriority"
+        (selectionChange)="applyTaskFilters()">
+
+        <mat-option value="">
+          All Priorities
+        </mat-option>
+
+        <mat-option value="CRITICAL">
+          Critical
+        </mat-option>
+
+        <mat-option value="HIGH">
+          High
+        </mat-option>
+
+        <mat-option value="MEDIUM">
+          Medium
+        </mat-option>
+
+        <mat-option value="LOW">
+          Low
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="clearTaskFilters()">
+
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear
+
+    </button>
+
+  </div>
+
+</div>
+
+  <div class="project-task-list">
+
+    @for (task of projectTasks(); track task.id) {
+
+      <div class="project-task">
+
+        <div class="task-main-info">
+
+          <strong>
+            {{ task.title }}
+          </strong>
+
+          <div class="task-badges">
+
+            <span
+              class="task-status-badge"
+              [class]="getTaskStatusClass(task.status)">
+              {{ task.status }}
+            </span>
+
+            <span
+              class="priority-badge"
+              [class]="getPriorityClass(task.priority)">
+              {{ task.priority }}
+            </span>
+
           </div>
+
         </div>
 
-        <div class="empty-tasks">
-          <mat-icon>task_alt</mat-icon>
+        <div class="task-extra">
 
-          <div>
-            <strong>No tasks displayed yet</strong>
-            <span>Project tasks will appear here.</span>
-          </div>
+          <span>
+            <mat-icon>person</mat-icon>
+            {{ task.assignedUserName || 'Unassigned' }}
+          </span>
+
+          <span>
+            <mat-icon>event</mat-icon>
+            {{ task.dueDate }}
+          </span>
+
+        </div>
+
+        <a
+          mat-stroked-button
+          [routerLink]="['/tasks', task.id]">
+
+          <mat-icon>visibility</mat-icon>
+          View Details
+
+        </a>
+
+      </div>
+
+    } @empty {
+
+      <div class="empty-tasks">
+
+        <mat-icon>task_alt</mat-icon>
+
+        <div>
+          <strong>No tasks for this project</strong>
+          <span>Tasks associated with this project will appear here.</span>
         </div>
 
       </div>
+
+    }
+
+  </div>
+
+</div>
 
     </mat-card>
 

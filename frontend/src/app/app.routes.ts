@@ -9,6 +9,7 @@ import { ProjectDetail } from './features/projects/project-detail/project-detail
 import { Tasks } from './features/tasks/tasks';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { TaskDetail } from './features/tasks/task-detail/task-detail';
+import { TaskForm } from './features/tasks/task-form/task-form';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,14 @@ export const routes: Routes = [
         component: Tasks
       },
       {
+        path: 'tasks/create',
+        component: TaskForm
+      },
+      {
+        path: 'tasks/:id/edit',
+        component: TaskForm
+      },
+      {
         path: 'tasks/:id',
         component: TaskDetail
       },
@@ -41,9 +50,13 @@ export const routes: Routes = [
         component: CreateProject
       },
       {
-        path: 'projects/:id',
-        component: ProjectDetail
-      }
+        path: 'projects/:id/edit',
+        component: CreateProject
+      },
+{
+  path: 'projects/:id',
+  component: ProjectDetail
+}
     ]
   },
   {

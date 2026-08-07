@@ -1,6 +1,7 @@
 <div class="projects-page">
 
   <div class="page-header">
+
     <div>
       <h1>Projects</h1>
       <p>View and manage your projects.</p>
@@ -11,8 +12,161 @@
       routerLink="/projects/create">
       Create Project
     </a>
+
   </div>
 
+
+
+
+
+
+  
+  <div class="project-filters">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Project Name</mat-label>
+
+    <input
+      matInput
+      [(ngModel)]="projectNameFilter"
+      (ngModelChange)="applyFilters()"
+      placeholder="Search projects">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+
+    <mat-select
+      [(ngModel)]="selectedStatus"
+      (selectionChange)="applyFilters()">
+
+      <mat-option value="">
+        All Statuses
+      </mat-option>
+
+      <mat-option value="ACTIVE">
+        Active
+      </mat-option>
+
+      <mat-option value="PLANNED">
+        Planned
+      </mat-option>
+
+      <mat-option value="COMPLETED">
+        Completed
+      </mat-option>
+
+      <mat-option value="CANCELLED">
+        Cancelled
+      </mat-option>
+
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="toggleAdvancedFilters()">
+
+    <mat-icon>tune</mat-icon>
+    {{ showAdvancedFilters ? 'Hide Filters' : 'More Filters' }}
+
+  </button>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="clearFilters()">
+
+    <mat-icon>filter_alt_off</mat-icon>
+    Clear Filters
+
+  </button>
+
+</div>
+
+@if (showAdvancedFilters) {
+
+  <div class="advanced-project-filters">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Start Date From</mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="startFromPicker"
+        [(ngModel)]="startDateFrom"
+        (dateChange)="applyFilters()">
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="startFromPicker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #startFromPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Start Date To</mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="startToPicker"
+        [(ngModel)]="startDateTo"
+        (dateChange)="applyFilters()">
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="startToPicker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #startToPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>End Date From</mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="endFromPicker"
+        [(ngModel)]="endDateFrom"
+        (dateChange)="applyFilters()">
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="endFromPicker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #endFromPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>End Date To</mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="endToPicker"
+        [(ngModel)]="endDateTo"
+        (dateChange)="applyFilters()">
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="endToPicker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #endToPicker />
+    </mat-form-field>
+
+  </div>
+
+}
+
+  <div class="sort-info">
+    <mat-icon>schedule</mat-icon>
+    <span>Sorted by nearest end date</span>
+  </div>
+
+  <!-- PROJECTS -->
   <div class="project-list">
 
     @for (project of projects(); track project.id) {
@@ -31,7 +185,7 @@
 
               <span
                 class="status-badge"
-                [class]="getStatusClass(project.status)">
+                [ngClass]="getStatusClass(project.status)">
                 {{ project.status }}
               </span>
 
@@ -65,7 +219,9 @@
 
             </div>
 
-            <div class="date-item">
+            <div
+              class="date-item"
+              [ngClass]="getDeadlineClass(project.endDate)">
 
               <span class="field-label">
                 End Date
@@ -74,6 +230,10 @@
               <strong>
                 {{ project.endDate }}
               </strong>
+
+              <span class="deadline-text">
+                {{ getDeadlineText(project.endDate) }}
+              </span>
 
             </div>
 
@@ -87,7 +247,6 @@
               [routerLink]="['/projects', project.id]">
 
               <mat-icon>visibility</mat-icon>
-
               View Details
 
             </a>
@@ -100,9 +259,16 @@
 
     } @empty {
 
-      <p class="empty-message">
-        No projects found.
-      </p>
+      <div class="empty-state">
+
+        <mat-icon>folder_off</mat-icon>
+
+        <div>
+          <h3>No projects found</h3>
+          <p>No projects match the selected filters.</p>
+        </div>
+
+      </div>
 
     }
 

@@ -3,14 +3,18 @@
   <mat-card class="form-card">
 
     <mat-card-header>
-      <mat-card-title>Create Project</mat-card-title>
+
+      <mat-card-title>
+        {{ isEditMode() ? 'Edit Project' : 'Create Project' }}
+      </mat-card-title>
+
     </mat-card-header>
 
     <mat-card-content>
 
       <form
         class="project-form"
-        (ngSubmit)="createProject()">
+        (ngSubmit)="saveProject()">
 
         <mat-form-field appearance="outline">
           <mat-label>Project Name</mat-label>
@@ -18,6 +22,7 @@
           <input
             matInput
             name="name"
+            maxlength="100"
             [(ngModel)]="name"
             required>
         </mat-form-field>
@@ -29,6 +34,7 @@
             matInput
             name="description"
             rows="4"
+            maxlength="1000"
             [(ngModel)]="description">
           </textarea>
         </mat-form-field>
@@ -40,15 +46,14 @@
             matInput
             [matDatepicker]="startPicker"
             name="startDate"
-            [(ngModel)]="startDate"
-            required>
+            [(ngModel)]="startDate">
 
           <mat-datepicker-toggle
             matIconSuffix
             [for]="startPicker">
           </mat-datepicker-toggle>
 
-          <mat-datepicker #startPicker></mat-datepicker>
+          <mat-datepicker #startPicker />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -58,15 +63,14 @@
             matInput
             [matDatepicker]="endPicker"
             name="endDate"
-            [(ngModel)]="endDate"
-            required>
+            [(ngModel)]="endDate">
 
           <mat-datepicker-toggle
             matIconSuffix
             [for]="endPicker">
           </mat-datepicker-toggle>
 
-          <mat-datepicker #endPicker></mat-datepicker>
+          <mat-datepicker #endPicker />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -88,6 +92,10 @@
               Completed
             </mat-option>
 
+            <mat-option value="CANCELLED">
+              Cancelled
+            </mat-option>
+
           </mat-select>
         </mat-form-field>
 
@@ -96,14 +104,16 @@
           <button
             mat-button
             type="button"
-            (click)="router.navigate(['/projects'])">
+            (click)="cancel()">
             Cancel
           </button>
 
           <button
             mat-flat-button
             type="submit">
-            Create Project
+
+            {{ isEditMode() ? 'Save Changes' : 'Create Project' }}
+
           </button>
 
         </div>
