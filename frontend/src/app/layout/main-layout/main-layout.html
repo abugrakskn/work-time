@@ -1,0 +1,60 @@
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <mat-icon>schedule</mat-icon>
+
+      <div>
+        <span class="brand-name">WorkTime</span>
+        <span class="brand-subtitle">Management</span>
+      </div>
+    </div>
+
+    <nav class="navigation">
+
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        routerLink="/tasks"
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>task_alt</mat-icon>
+        <span>Tasks</span>
+      </a>
+
+      <a
+        routerLink="/projects"
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>folder</mat-icon>
+        <span>Projects</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <div class="main">
+
+    <mat-toolbar class="toolbar">
+      <span>WorkTime</span>
+
+      <span class="spacer"></span>
+
+      <button mat-icon-button>
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+
+  </div>
+
+</div>

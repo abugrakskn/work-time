@@ -1,0 +1,89 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f6f7f9;
+}
+
+.sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px 28px;
+}
+
+.brand mat-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+}
+
+.brand-name {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.brand-subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #777;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px 14px;
+  border-radius: 8px;
+
+  color: #555;
+  text-decoration: none;
+
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.nav-item:hover {
+  background: #f1f3f5;
+}
+
+.nav-item.active {
+  background: #e8eaf6;
+  color: #3f51b5;
+  font-weight: 500;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.toolbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.content {
+  padding: 32px;
+}
