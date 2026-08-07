@@ -1,0 +1,81 @@
+@if (project(); as project) {
+
+  <div class="detail-page">
+
+    <div class="top-actions">
+      <a
+        mat-button
+        routerLink="/projects">
+
+        <mat-icon>arrow_back</mat-icon>
+        Back to Projects
+      </a>
+    </div>
+
+    <mat-card class="project-card">
+
+      <div class="project-header">
+
+        <div>
+          <h1>{{ project.name }}</h1>
+
+          <p class="description">
+            {{ project.description }}
+          </p>
+        </div>
+
+        <span
+          class="status-badge"
+          [class]="getStatusClass(project.status)">
+          {{ project.status }}
+        </span>
+
+      </div>
+
+      <div class="project-info">
+
+        <div class="info-item">
+          <mat-icon>calendar_today</mat-icon>
+
+          <div>
+            <span class="label">Start Date</span>
+            <strong>{{ project.startDate }}</strong>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <mat-icon>event</mat-icon>
+
+          <div>
+            <span class="label">End Date</span>
+            <strong>{{ project.endDate }}</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tasks-section">
+
+        <div class="section-header">
+          <div>
+            <h2>Tasks</h2>
+            <p>Tasks associated with this project.</p>
+          </div>
+        </div>
+
+        <div class="empty-tasks">
+          <mat-icon>task_alt</mat-icon>
+
+          <div>
+            <strong>No tasks displayed yet</strong>
+            <span>Project tasks will appear here.</span>
+          </div>
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+}

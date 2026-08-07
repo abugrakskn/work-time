@@ -1,0 +1,21 @@
+.create-page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.form-card {
+  padding: 16px;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

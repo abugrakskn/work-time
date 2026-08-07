@@ -1,4 +1,111 @@
-<div class="page-header">
-  <h1>Projects</h1>
-  <p>View and manage your projects.</p>
+<div class="projects-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Projects</h1>
+      <p>View and manage your projects.</p>
+    </div>
+
+    <a
+      mat-flat-button
+      routerLink="/projects/create">
+      Create Project
+    </a>
+  </div>
+
+  <div class="project-list">
+
+    @for (project of projects(); track project.id) {
+
+      <mat-card class="project-card">
+
+        <div class="project-main">
+
+          <div class="project-info">
+
+            <div class="title-row">
+
+              <h2 class="project-title">
+                {{ project.name }}
+              </h2>
+
+              <span
+                class="status-badge"
+                [class]="getStatusClass(project.status)">
+                {{ project.status }}
+              </span>
+
+            </div>
+
+            <div class="description-block">
+
+              <span class="field-label">
+                Description
+              </span>
+
+              <p class="description-text">
+                {{ project.description }}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="project-dates">
+
+            <div class="date-item">
+
+              <span class="field-label">
+                Start Date
+              </span>
+
+              <strong>
+                {{ project.startDate }}
+              </strong>
+
+            </div>
+
+            <div class="date-item">
+
+              <span class="field-label">
+                End Date
+              </span>
+
+              <strong>
+                {{ project.endDate }}
+              </strong>
+
+            </div>
+
+          </div>
+
+          <div class="project-actions">
+
+            <a
+              mat-stroked-button
+              class="details-button"
+              [routerLink]="['/projects', project.id]">
+
+              <mat-icon>visibility</mat-icon>
+
+              View Details
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </mat-card>
+
+    } @empty {
+
+      <p class="empty-message">
+        No projects found.
+      </p>
+
+    }
+
+  </div>
+
 </div>
