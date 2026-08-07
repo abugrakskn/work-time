@@ -1,0 +1,92 @@
+@if (task(); as task) {
+
+  <div class="detail-page">
+
+    <a
+      mat-button
+      routerLink="/tasks">
+
+      <mat-icon>arrow_back</mat-icon>
+      Back to Tasks
+
+    </a>
+
+    <mat-card class="task-card">
+
+      <div class="task-header">
+
+        <div>
+
+          <h1>{{ task.title }}</h1>
+
+          <p class="description">
+            {{ task.description }}
+          </p>
+
+        </div>
+
+        <div class="badges">
+
+          <span
+            class="status-badge"
+            [class]="getStatusClass(task.status)">
+            {{ task.status }}
+          </span>
+
+          <span
+            class="priority-badge"
+            [class]="getPriorityClass(task.priority)">
+            {{ task.priority }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="information-grid">
+
+        <div class="info-item">
+          <mat-icon>folder</mat-icon>
+
+          <div>
+            <span>Project</span>
+            <strong>{{ task.projectName }}</strong>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <mat-icon>person</mat-icon>
+
+          <div>
+            <span>Assigned To</span>
+            <strong>{{ task.assignedUserName || 'Unassigned' }}</strong>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <mat-icon>event</mat-icon>
+
+          <div>
+            <span>Due Date</span>
+            <strong>{{ task.dueDate }}</strong>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <mat-icon>schedule</mat-icon>
+
+          <div>
+            <span>Estimated Duration</span>
+            <strong>
+              {{ task.estimatedDurationMinutes }} minutes
+            </strong>
+          </div>
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+}

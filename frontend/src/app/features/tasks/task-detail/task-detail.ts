@@ -1,41 +1,42 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Task } from '../../core/models/task';
-import { TaskService } from '../../core/services/task';
+import { Task } from '../../../core/models/task';
+import { TaskService } from '../../../core/services/task';
 
 @Component({
-  selector: 'app-tasks',
+  selector: 'app-task-detail',
   imports: [
     RouterLink,
     MatButtonModule,
     MatCardModule,
     MatIconModule
   ],
-  templateUrl: './tasks.html',
-  styleUrl: './tasks.scss'
+  templateUrl: './task-detail.html',
+  styleUrl: './task-detail.scss'
 })
-export class Tasks implements OnInit {
+export class TaskDetail implements OnInit {
 
+  private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
 
-  tasks = signal<Task[]>([]);
+  task = signal<Task | null>(null);
 
   ngOnInit() {
-    this.loadTasks();
-  }
+    const id = Number(
+      this.route.snapshot.paramMap.get('id')
+    );
 
-  loadTasks() {
-    this.taskService.getAll().subscribe({
-      next: (tasks) => {
-        this.tasks.set(tasks);
+    this.taskService.getById(id).subscribe({
+      next: (task) => {
+        this.task.set(task);
       },
       error: (err) => {
-        console.error('Tasks could not be loaded.', err);
+        console.error('Task could not be loaded.', err);
       }
     });
   }
@@ -44,16 +45,12 @@ export class Tasks implements OnInit {
     switch (status) {
       case 'TODO':
         return 'status-todo';
-
       case 'IN_PROGRESS':
         return 'status-progress';
-
       case 'DONE':
         return 'status-done';
-
       case 'CANCELLED':
         return 'status-cancelled';
-
       default:
         return 'status-default';
     }
@@ -63,16 +60,12 @@ export class Tasks implements OnInit {
     switch (priority) {
       case 'LOW':
         return 'priority-low';
-
       case 'MEDIUM':
         return 'priority-medium';
-
       case 'HIGH':
         return 'priority-high';
-
       case 'CRITICAL':
         return 'priority-critical';
-
       default:
         return 'priority-default';
     }
