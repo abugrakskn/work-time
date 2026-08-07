@@ -1,0 +1,117 @@
+<div class="create-page">
+
+  <mat-card class="form-card">
+
+    <mat-card-header>
+      <mat-card-title>Create Project</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <form
+        class="project-form"
+        (ngSubmit)="createProject()">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Project Name</mat-label>
+
+          <input
+            matInput
+            name="name"
+            [(ngModel)]="name"
+            required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+
+          <textarea
+            matInput
+            name="description"
+            rows="4"
+            [(ngModel)]="description">
+          </textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="startPicker"
+            name="startDate"
+            [(ngModel)]="startDate"
+            required>
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startPicker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            name="endDate"
+            [(ngModel)]="endDate"
+            required>
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endPicker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+
+          <mat-select
+            name="status"
+            [(ngModel)]="status">
+
+            <mat-option value="PLANNED">
+              Planned
+            </mat-option>
+
+            <mat-option value="ACTIVE">
+              Active
+            </mat-option>
+
+            <mat-option value="COMPLETED">
+              Completed
+            </mat-option>
+
+          </mat-select>
+        </mat-form-field>
+
+        <div class="actions">
+
+          <button
+            mat-button
+            type="button"
+            (click)="router.navigate(['/projects'])">
+            Cancel
+          </button>
+
+          <button
+            mat-flat-button
+            type="submit">
+            Create Project
+          </button>
+
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

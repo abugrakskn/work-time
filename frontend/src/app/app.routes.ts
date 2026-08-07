@@ -4,6 +4,8 @@ import { authChildGuard } from './core/guards/auth-child-guard';
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Projects } from './features/projects/projects';
+import { CreateProject } from './features/projects/create-project/create-project';
+import { ProjectDetail } from './features/projects/project-detail/project-detail';
 import { Tasks } from './features/tasks/tasks';
 import { MainLayout } from './layout/main-layout/main-layout';
 
@@ -12,7 +14,6 @@ export const routes: Routes = [
     path: '',
     component: Login
   },
-
   {
     path: '',
     component: MainLayout,
@@ -29,10 +30,17 @@ export const routes: Routes = [
       {
         path: 'projects',
         component: Projects
+      },
+      {
+        path: 'projects/create',
+        component: CreateProject
+      },
+      {
+        path: 'projects/:id',
+        component: ProjectDetail
       }
     ]
   },
-
   {
     path: '**',
     redirectTo: ''
