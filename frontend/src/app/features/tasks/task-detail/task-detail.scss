@@ -135,4 +135,10 @@
   .information-grid {
     grid-template-columns: 1fr;
   }
+
+  .top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

@@ -2,14 +2,27 @@
 
   <div class="detail-page">
 
-    <a
-      mat-button
-      routerLink="/tasks">
+    <div class="top-actions">
 
-      <mat-icon>arrow_back</mat-icon>
-      Back to Tasks
+      <a
+        mat-button
+        routerLink="/tasks">
 
-    </a>
+        <mat-icon>arrow_back</mat-icon>
+        Back to Tasks
+
+      </a>
+
+      <a
+        mat-stroked-button
+        [routerLink]="['/tasks', task.id, 'edit']">
+
+        <mat-icon>edit</mat-icon>
+        Edit Task
+
+      </a>
+
+    </div>
 
     <mat-card class="task-card">
 
