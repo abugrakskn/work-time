@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { LoginRequest } from '../models/login-request';
 
 @Injectable({
@@ -12,20 +13,13 @@ export class AuthService {
   login(request: LoginRequest) {
     return this.http.post(
       'http://localhost:8080/api/auth/login',
-      request,
-      {
-        withCredentials: true
-      }
+      request
     );
   }
 
   getCurrentUser() {
     return this.http.get(
-      'http://localhost:8080/api/auth/me',
-      {
-        withCredentials: true
-      }
+      'http://localhost:8080/api/auth/me'
     );
   }
-
 }
