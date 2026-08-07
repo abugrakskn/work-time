@@ -37,3 +37,19 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: Roboto, Arial, sans-serif;
+  background: #f6f7f9;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.page-header p {
+  margin-top: 8px;
+  color: #6b7280;
+}
