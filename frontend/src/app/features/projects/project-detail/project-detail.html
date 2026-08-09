@@ -14,14 +14,16 @@
 
   </a>
 
-  <a
-  mat-stroked-button
-  [routerLink]="['/projects', project.id, 'edit']">
+  @if (isAdmin()) {
+    <a
+      mat-stroked-button
+      [routerLink]="['/projects', project.id, 'edit']">
 
-  <mat-icon>edit</mat-icon>
-  Edit Project
+      <mat-icon>edit</mat-icon>
+      Edit Project
 
-</a>
+    </a>
+  }
 
 </div>
     </div>

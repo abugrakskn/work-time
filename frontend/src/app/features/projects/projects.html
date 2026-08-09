@@ -7,19 +7,15 @@
       <p>View and manage your projects.</p>
     </div>
 
-    <a
-      mat-flat-button
-      routerLink="/projects/create">
-      Create Project
-    </a>
+    @if (isAdmin()) {
+      <a
+        mat-flat-button
+        routerLink="/projects/create">
+        Create Project
+      </a>
+    }
 
   </div>
-
-
-
-
-
-
   
   <div class="project-filters">
 

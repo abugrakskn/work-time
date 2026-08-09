@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { Task } from '../../core/models/task';
 import { TaskService } from '../../core/services/task';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-tasks',
@@ -28,6 +29,7 @@ import { TaskService } from '../../core/services/task';
 export class Tasks implements OnInit {
 
   private taskService = inject(TaskService);
+  protected readonly isAdmin = inject(AuthService).isAdmin;
 
   allTasks = signal<Task[]>([]);
   tasks = signal<Task[]>([]);

@@ -13,14 +13,16 @@
 
       </a>
 
-      <a
-        mat-stroked-button
-        [routerLink]="['/tasks', task.id, 'edit']">
+      @if (isAdmin()) {
+        <a
+          mat-stroked-button
+          [routerLink]="['/tasks', task.id, 'edit']">
 
-        <mat-icon>edit</mat-icon>
-        Edit Task
+          <mat-icon>edit</mat-icon>
+          Edit Task
 
-      </a>
+        </a>
+      }
 
     </div>
 

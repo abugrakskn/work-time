@@ -13,6 +13,7 @@ import { Task } from '../../../core/models/task';
 
 import { ProjectService } from '../../../core/services/project';
 import { TaskService } from '../../../core/services/task';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-project-detail',
@@ -33,6 +34,7 @@ export class ProjectDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private projectService = inject(ProjectService);
   private taskService = inject(TaskService);
+  protected readonly isAdmin = inject(AuthService).isAdmin;
 
   project = signal<Project | null>(null);
   projectTasks = signal<Task[]>([]);

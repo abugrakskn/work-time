@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Task } from '../../../core/models/task';
 import { TaskService } from '../../../core/services/task';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-task-detail',
@@ -23,6 +24,7 @@ export class TaskDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
+  protected readonly isAdmin = inject(AuthService).isAdmin;
 
   task = signal<Task | null>(null);
 

@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { Project } from '../../core/models/project';
 import { ProjectService } from '../../core/services/project';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-projects',
@@ -36,6 +37,7 @@ import { ProjectService } from '../../core/services/project';
 export class Projects implements OnInit {
 
   private projectService = inject(ProjectService);
+  protected readonly isAdmin = inject(AuthService).isAdmin;
 
   allProjects = signal<Project[]>([]);
   projects = signal<Project[]>([]);

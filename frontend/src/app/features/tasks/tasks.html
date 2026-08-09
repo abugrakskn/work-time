@@ -7,11 +7,13 @@
       <p>View and manage your assigned tasks.</p>
     </div>
 
-    <a
-      mat-flat-button
-      routerLink="/tasks/create">
-      Create Task
-    </a>
+    @if (isAdmin()) {
+      <a
+        mat-flat-button
+        routerLink="/tasks/create">
+        Create Task
+      </a>
+    }
 
   </div>
 

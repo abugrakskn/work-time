@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authChildGuard } from './core/guards/auth-child-guard';
+import { adminGuard } from './core/guards/admin-guard';
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Projects } from './features/projects/projects';
@@ -30,12 +31,13 @@ export const routes: Routes = [
         component: Tasks
       },
       {
-        path: 'tasks/create',
+        path: 'tasks/:id/edit',
         component: TaskForm
       },
       {
         path: 'tasks/:id/edit',
-        component: TaskForm
+        component: TaskForm,
+        canActivate: [adminGuard]
       },
       {
         path: 'tasks/:id',
@@ -46,8 +48,9 @@ export const routes: Routes = [
         component: Projects
       },
       {
-        path: 'projects/create',
-        component: CreateProject
+        path: 'projects/:id/edit',
+        component: CreateProject,
+        canActivate: [adminGuard]
       },
       {
         path: 'projects/:id/edit',
