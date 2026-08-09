@@ -47,8 +47,8 @@ export class TaskDetail implements OnInit {
         return 'status-todo';
       case 'IN_PROGRESS':
         return 'status-progress';
-      case 'DONE':
-        return 'status-done';
+      case 'COMPLETED':
+        return 'status-completed';
       case 'CANCELLED':
         return 'status-cancelled';
       default:

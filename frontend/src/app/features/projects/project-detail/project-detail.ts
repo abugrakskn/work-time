@@ -98,7 +98,7 @@ export class ProjectDetail implements OnInit {
   const statusOrder: Record<string, number> = {
     IN_PROGRESS: 4,
     TODO: 3,
-    DONE: 2,
+    COMPLETED: 2,
     CANCELLED: 1
   };
 
@@ -161,8 +161,8 @@ clearTaskFilters() {
       case 'IN_PROGRESS':
         return 'task-status-progress';
 
-      case 'DONE':
-        return 'task-status-done';
+      case 'COMPLETED':
+        return 'task-status-completed';
 
       case 'CANCELLED':
         return 'task-status-cancelled';
