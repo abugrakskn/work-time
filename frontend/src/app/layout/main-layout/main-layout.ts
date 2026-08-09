@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-main-layout',
@@ -12,7 +13,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    MatButtonModule,
     MatIconModule,
     MatSidenavModule,
     MatToolbarModule
@@ -22,4 +22,5 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class MainLayout {
 
+  protected readonly currentUser = inject(AuthService).currentUser;
 }
