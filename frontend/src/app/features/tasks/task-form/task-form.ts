@@ -16,6 +16,8 @@ import { Project } from '../../../core/models/project';
 import { ProjectService } from '../../../core/services/project';
 import { TaskService } from '../../../core/services/task';
 
+import { toLocalDateString } from '../../../core/utils/date.utils';
+
 @Component({
   selector: 'app-task-form',
   imports: [
@@ -116,7 +118,9 @@ export class TaskForm implements OnInit {
     const request: CreateTaskRequest = {
       title: this.title,
       description: this.description,
-      dueDate: this.toDateString(this.dueDate),
+      dueDate: this.dueDate
+        ? toLocalDateString(this.dueDate)
+        : null,
       estimatedDurationMinutes: this.estimatedDurationMinutes,
       priority: this.priority,
       projectId: this.projectId!,
@@ -137,7 +141,9 @@ export class TaskForm implements OnInit {
     const request: UpdateTaskRequest = {
       title: this.title,
       description: this.description,
-      dueDate: this.toDateString(this.dueDate),
+      dueDate: this.dueDate
+        ? toLocalDateString(this.dueDate)
+        : null,
       estimatedDurationMinutes: this.estimatedDurationMinutes,
       priority: this.priority,
       status: this.status,
@@ -157,13 +163,5 @@ export class TaskForm implements OnInit {
 
   cancel() {
     this.router.navigate(['/tasks']);
-  }
-
-  private toDateString(date: Date | null): string | null {
-    if (!date) {
-      return null;
-    }
-
-    return date.toISOString().split('T')[0];
   }
 }

@@ -14,6 +14,8 @@ import { CreateProjectRequest } from '../../../core/models/create-project-reques
 import { UpdateProjectRequest } from '../../../core/models/update-project-request';
 import { ProjectService } from '../../../core/services/project';
 
+import { toLocalDateString } from '../../../core/utils/date.utils';
+
 @Component({
   selector: 'app-create-project',
   imports: [
@@ -93,8 +95,8 @@ export class CreateProject implements OnInit {
     const request: CreateProjectRequest = {
       name: this.name,
       description: this.description,
-      startDate: this.toDateString(this.startDate),
-      endDate: this.toDateString(this.endDate),
+      startDate: toLocalDateString(this.startDate),
+      endDate: toLocalDateString(this.endDate),
       status: this.status
     };
 
@@ -113,10 +115,10 @@ export class CreateProject implements OnInit {
       name: this.name,
       description: this.description,
       startDate: this.startDate
-        ? this.toDateString(this.startDate)
+        ? toLocalDateString(this.startDate)
         : null,
       endDate: this.endDate
-        ? this.toDateString(this.endDate)
+        ? toLocalDateString(this.endDate)
         : null,
       status: this.status
     };
@@ -138,9 +140,5 @@ export class CreateProject implements OnInit {
     }
 
     this.router.navigate(['/projects']);
-  }
-
-  private toDateString(date: Date): string {
-    return date.toISOString().split('T')[0];
   }
 }
