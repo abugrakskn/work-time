@@ -164,17 +164,43 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Assigned User ID</mat-label>
+        @if (isStatusOnlyMode()) {
+          <mat-form-field appearance="outline">
+            <mat-label>Assigned User</mat-label>
 
-          <input
-            matInput
-            type="number"
-            name="assignedUserId"
-            [(ngModel)]="assignedUserId"
-            [disabled]="isStatusOnlyMode()">
+            <input
+              matInput
+              name="assignedUserName"
+              [ngModel]="assignedUserName || 'Unassigned'"
+              disabled>
+            </mat-form-field>
+        } @else {
+          <mat-form-field appearance="outline">
+            <mat-label>Assigned User</mat-label>
 
-        </mat-form-field>
+            <mat-select
+              name="assignedUserId"
+              [(ngModel)]="assignedUserId">
+              <mat-option [value]="null">
+                Unassigned
+              </mat-option>
+
+              @for (user of users(); track user.id) {
+                <mat-option
+                  [value]="user.id"
+                  [disabled]="!user.active">
+                  {{ user.firstName }} {{ user.lastName }}
+                  - {{ user.email}}
+                  @if (!user.active) {
+                    (Inactive)
+                  }
+                </mat-option>
+
+              }
+
+            </mat-select>
+          </mat-form-field>
+        }
 
         <div class="actions">
 

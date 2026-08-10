@@ -20,11 +20,13 @@ import { CreateTaskRequest } from '../../../core/models/create-task-request';
 import { Project } from '../../../core/models/project';
 import { TaskStatus } from '../../../core/models/task-status';
 import { UpdateTaskRequest } from '../../../core/models/update-task-request';
+import { User } from '../../../core/models/user';
 
 import { AuthService } from '../../../core/services/auth';
 import { NotificationService } from '../../../core/services/notification';
 import { ProjectService } from '../../../core/services/project';
 import { TaskService } from '../../../core/services/task';
+import { UserService } from '../../../core/services/user';
 
 import { toLocalDateString } from '../../../core/utils/date.utils';
 
@@ -52,6 +54,7 @@ export class TaskForm implements OnInit {
   private notificationService = inject(NotificationService);
   private projectService = inject(ProjectService);
   private taskService = inject(TaskService);
+  private userService = inject(UserService);
 
   protected readonly isAdmin = this.authService.isAdmin;
 
@@ -64,6 +67,7 @@ export class TaskForm implements OnInit {
   taskId: number | null = null;
 
   projects = signal<Project[]>([]);
+  users = signal<User[]>([]);
 
   title = '';
   description = '';
@@ -73,11 +77,16 @@ export class TaskForm implements OnInit {
   status: TaskStatus = 'TODO';
   projectId: number | null = null;
   assignedUserId: number | null = null;
+  assignedUserName: string | null = null;
 
   minDate = new Date();
 
   ngOnInit() {
     this.loadProjects();
+
+    if (this.isAdmin()) {
+      this.loadUsers();
+    }
 
     const idParam = this.route.snapshot.paramMap.get('id');
 
@@ -100,6 +109,17 @@ export class TaskForm implements OnInit {
     });
   }
 
+  loadUsers() {
+  this.userService.getAll().subscribe({
+      next: (users) => {
+        this.users.set(users);
+      },
+      error: (err) => {
+        console.error('Users could not be loaded.', err);
+      }
+    });
+  }
+
   loadTask(id: number) {
     this.taskService.getById(id).subscribe({
       next: (task) => {
@@ -117,6 +137,7 @@ export class TaskForm implements OnInit {
         this.status = task.status;
         this.projectId = task.projectId;
         this.assignedUserId = task.assignedUserId;
+        this.assignedUserName = task.assignedUserName;
       },
       error: (err) => {
         console.error('Task could not be loaded.', err);
