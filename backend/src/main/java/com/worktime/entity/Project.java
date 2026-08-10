@@ -37,4 +37,9 @@ public class Project {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProjectStatus status;
+
+    public boolean canAcceptNewTasks() {
+        return status == ProjectStatus.PLANNED
+                || status == ProjectStatus.ACTIVE;
+    }
 }
