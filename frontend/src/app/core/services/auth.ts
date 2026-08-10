@@ -4,6 +4,7 @@ import { tap } from 'rxjs';
 
 import { LoginRequest } from '../models/login-request';
 import { User } from '../models/user';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { User } from '../models/user';
 export class AuthService {
 
   private http = inject(HttpClient);
+  private readonly apiUrl = `${API_BASE_URL}/auth`;
 
   private currentUserState = signal<User | null>(null);
 
@@ -29,7 +31,7 @@ export class AuthService {
 
   getCurrentUser() {
     return this.http.get<User>(
-      'http://localhost:8080/api/auth/me'
+      `${this.apiUrl}/me`
     ).pipe(
       tap((user) => {
         this.currentUserState.set(user);
