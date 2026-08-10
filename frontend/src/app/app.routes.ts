@@ -1,64 +1,83 @@
 import { Routes } from '@angular/router';
 
-import { authChildGuard } from './core/guards/auth-child-guard';
 import { adminGuard } from './core/guards/admin-guard';
-import { Login } from './features/auth/login/login';
-import { Dashboard } from './features/dashboard/dashboard';
-import { Projects } from './features/projects/projects';
-import { CreateProject } from './features/projects/create-project/create-project';
-import { ProjectDetail } from './features/projects/project-detail/project-detail';
-import { Tasks } from './features/tasks/tasks';
-import { MainLayout } from './layout/main-layout/main-layout';
-import { TaskDetail } from './features/tasks/task-detail/task-detail';
-import { TaskForm } from './features/tasks/task-form/task-form';
+import { authChildGuard } from './core/guards/auth-child-guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: Login
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/auth/login/login')
+        .then((component) => component.Login)
   },
   {
     path: '',
-    component: MainLayout,
+    loadComponent: () =>
+      import('./layout/main-layout/main-layout')
+        .then((component) => component.MainLayout),
     canActivateChild: [authChildGuard],
     children: [
       {
         path: 'dashboard',
-        component: Dashboard
+        loadComponent: () =>
+          import('./features/dashboard/dashboard')
+            .then((component) => component.Dashboard)
       },
       {
         path: 'tasks',
-        component: Tasks
+        loadComponent: () =>
+          import('./features/tasks/tasks')
+            .then((component) => component.Tasks)
+      },
+      {
+        path: 'tasks/create',
+        loadComponent: () =>
+          import('./features/tasks/task-form/task-form')
+            .then((component) => component.TaskForm),
+        canActivate: [adminGuard]
       },
       {
         path: 'tasks/:id/edit',
-        component: TaskForm
-      },
-      {
-        path: 'tasks/:id/edit',
-        component: TaskForm,
+        loadComponent: () =>
+          import('./features/tasks/task-form/task-form')
+            .then((component) => component.TaskForm)
       },
       {
         path: 'tasks/:id',
-        component: TaskDetail
+        loadComponent: () =>
+          import('./features/tasks/task-detail/task-detail')
+            .then((component) => component.TaskDetail)
       },
       {
         path: 'projects',
-        component: Projects
+        loadComponent: () =>
+          import('./features/projects/projects')
+            .then((component) => component.Projects)
       },
       {
-        path: 'projects/:id/edit',
-        component: CreateProject,
+        path: 'projects/create',
+        loadComponent: () =>
+          import(
+            './features/projects/create-project/create-project'
+          ).then((component) => component.CreateProject),
         canActivate: [adminGuard]
       },
       {
         path: 'projects/:id/edit',
-        component: CreateProject
+        loadComponent: () =>
+          import(
+            './features/projects/create-project/create-project'
+          ).then((component) => component.CreateProject),
+        canActivate: [adminGuard]
       },
-{
-  path: 'projects/:id',
-  component: ProjectDetail
-}
+      {
+        path: 'projects/:id',
+        loadComponent: () =>
+          import(
+            './features/projects/project-detail/project-detail'
+          ).then((component) => component.ProjectDetail)
+      }
     ]
   },
   {
