@@ -31,10 +31,12 @@ public class CreateProjectRequest {
 
     @Schema(description = "Planned start date of the project",
             example = "2026-08-01")
+    @NotNull(message = "Project start date is required")
     private LocalDate startDate;
 
     @Schema(description = "Planned end date of the project",
             example = "2026-09-30")
+    @NotNull(message = "Project end date is required")
     private LocalDate endDate;
 
     @Schema(description = "Current status of the project",

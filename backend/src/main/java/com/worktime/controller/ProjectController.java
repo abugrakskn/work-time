@@ -82,17 +82,5 @@ public class ProjectController {
         return projectService.updateProject(id, request);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a project",
-                description = "Deletes the project with the specified ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204",
-                    description = "Project deleted successfully"),
-            @ApiResponse(responseCode = "404",
-                    description = "Project not found")
-    })
-    public void deleteProject(@PathVariable Long id) {
-        projectService.deleteProject(id);
-    }
+
 }

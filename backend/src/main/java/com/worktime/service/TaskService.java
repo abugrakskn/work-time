@@ -10,9 +10,12 @@ import com.worktime.repository.ProjectRepository;
 import com.worktime.repository.TaskRepository;
 import com.worktime.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.access.AccessDeniedException;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,6 +36,13 @@ public class TaskService {
                 .findById(request.getProjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found!"));
 
+        validateProjectCanAcceptNewTask(project);
+
+        validateTaskDueDate(
+                project,
+                request.getDueDate()
+        );
+
         TaskPriority priority = request.getPriority() != null
                 ? request.getPriority()
                 : TaskPriority.MEDIUM;
@@ -47,11 +57,9 @@ public class TaskService {
 
         task.setProject(project);
 
-        if (request.getAssignedUserId() != null) {
-            User user = userRepository.findById(request.getAssignedUserId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
-            task.setAssignedUser(user);
-        }
+        task.setAssignedUser(
+                resolveAssignedUser(request.getAssignedUserId())
+        );
 
         Task createdTask = taskRepository.save(task);
 
@@ -91,29 +99,40 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
 
-        task.setTitle(request.getTitle());
-        task.setDescription(request.getDescription());
-        task.setEstimatedDurationMinutes(request.getEstimatedDurationMinutes());
-        if (request.getPriority() != null) {
-            task.setPriority(request.getPriority());
-        }
-        task.setDueDate(request.getDueDate());
-        task.setStatus(request.getStatus());
+        validateDueDateForUpdate(
+                task,
+                request.getDueDate()
+        );
 
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found!"));
+
+        boolean projectChanged =
+                !task.getProject()
+                        .getId()
+                        .equals(project.getId());
+
+        if (projectChanged) {
+            validateProjectCanAcceptNewTask(project);
+        }
+
+        validateTaskDueDate(
+                project,
+                request.getDueDate()
+        );
+
+        task.setTitle(request.getTitle());
+        task.setDescription(request.getDescription());
+        task.setEstimatedDurationMinutes(request.getEstimatedDurationMinutes());
+        task.setPriority(request.getPriority());
+        task.setDueDate(request.getDueDate());
+        task.setStatus(request.getStatus());
+
         task.setProject(project);
 
-        if (request.getAssignedUserId() == null) {
-            task.setAssignedUser(null);
-        } else {
-            User user = userRepository.findById(request.getAssignedUserId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("User not found")
-                    );
-
-            task.setAssignedUser(user);
-        }
+        task.setAssignedUser(
+                resolveAssignedUser(request.getAssignedUserId())
+        );
 
         Task updatedTask = taskRepository.save(task);
 
@@ -141,6 +160,63 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
 
         taskRepository.delete(task);
+    }
+
+    private void validateDueDateForUpdate(
+            Task task,
+            LocalDate requestedDueDate
+    ) {
+        if (requestedDueDate == null) {
+            return;
+        }
+
+        if (!requestedDueDate.isBefore(LocalDate.now())) {
+            return;
+        }
+
+        if (requestedDueDate.equals(task.getDueDate())) {
+            return;
+        }
+
+        throw new IllegalArgumentException("Due date cannot be changed to a past date");
+    }
+
+    private void validateProjectCanAcceptNewTask(
+            Project project
+    ) {
+        if (!project.canAcceptNewTasks()) {
+            throw new IllegalArgumentException(
+                    "Completed or cancelled projects cannot accept new tasks"
+            );
+        }
+    }
+
+    private void validateTaskDueDate(Project project, LocalDate dueDate){
+        if (dueDate == null){
+            return;
+        }
+        if (dueDate.isBefore(project.getStartDate())) {
+            throw new IllegalArgumentException("Task due date cannot be before the project start date");
+        }
+        if (dueDate.isAfter(project.getEndDate())) {
+            throw new IllegalArgumentException("Task due date cannot be after the project end date");
+        }
+
+    }
+
+    private User resolveAssignedUser(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+
+        if (!user.isActive()) {
+            throw new IllegalArgumentException("Inactive users cannot be assigned to tasks");
+        }
+
+        return user;
     }
 
     private TaskResponse toResponse(Task task){

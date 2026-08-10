@@ -30,7 +30,6 @@ public class UpdateTaskRequest {
 
     @Schema(description = "Updated due date of the task",
             example = "2027-08-01")
-    @FutureOrPresent(message = "Due date cannot be in the past")
     private LocalDate dueDate;
 
     @Schema(description = "Updated estimated duration of the task in minutes",
@@ -38,12 +37,14 @@ public class UpdateTaskRequest {
     @Positive(message = "Estimated duration must be greater than zero")
     private Integer estimatedDurationMinutes;
 
-    @Schema(description = "Updated priority level of the task (optional)",
+    @Schema(description = "Updated priority level of the task",
             example = "HIGH")
+    @NotNull(message = "Task priority is required")
     private TaskPriority priority;
 
     @Schema(description = "Current status of the task",
-            example = "DONE")
+            example = "COMPLETED")
+    @NotNull(message = "Task status is required")
     private TaskStatus status;
 
     @Schema(description = "Updated project ID that the task belongs to",
