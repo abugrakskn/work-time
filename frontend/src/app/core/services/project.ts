@@ -4,6 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { CreateProjectRequest } from '../models/create-project-request';
 import { UpdateProjectRequest } from '../models/update-project-request';
 import { Project } from '../models/project';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class ProjectService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api/projects';
+  private readonly apiUrl = `${API_BASE_URL}/projects`;
 
   getAll() {
     return this.http.get<Project[]>(this.apiUrl);

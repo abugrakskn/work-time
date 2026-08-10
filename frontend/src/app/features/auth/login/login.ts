@@ -38,9 +38,8 @@ export class Login {
       next: () => {
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => {
-        console.error(err);
-        alert('Login failed!');
+      error: () => {
+        // Error feedback is handled by the HTTP error interceptor
       }
     });
 

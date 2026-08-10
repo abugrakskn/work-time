@@ -53,3 +53,15 @@ body {
   margin-top: 8px;
   color: #6b7280;
 }
+
+.success-snackbar {
+  --mat-snack-bar-container-color: #166534;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.error-snackbar {
+  --mat-snack-bar-container-color: #b91c1c;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}

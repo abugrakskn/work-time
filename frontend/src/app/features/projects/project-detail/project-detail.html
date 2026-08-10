@@ -14,14 +14,16 @@
 
   </a>
 
-  <a
-  mat-stroked-button
-  [routerLink]="['/projects', project.id, 'edit']">
+  @if (isAdmin()) {
+    <a
+      mat-stroked-button
+      [routerLink]="['/projects', project.id, 'edit']">
 
-  <mat-icon>edit</mat-icon>
-  Edit Project
+      <mat-icon>edit</mat-icon>
+      Edit Project
 
-</a>
+    </a>
+  }
 
 </div>
     </div>
@@ -98,8 +100,8 @@
           Todo
         </mat-option>
 
-        <mat-option value="DONE">
-          Done
+        <mat-option value="COMPLETED">
+          Completed
         </mat-option>
 
         <mat-option value="CANCELLED">

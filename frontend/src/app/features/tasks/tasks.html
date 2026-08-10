@@ -7,11 +7,13 @@
       <p>View and manage your assigned tasks.</p>
     </div>
 
-    <a
-      mat-flat-button
-      routerLink="/tasks/create">
-      Create Task
-    </a>
+    @if (isAdmin()) {
+      <a
+        mat-flat-button
+        routerLink="/tasks/create">
+        Create Task
+      </a>
+    }
 
   </div>
 
@@ -66,8 +68,8 @@
           In Progress
         </mat-option>
 
-        <mat-option value="DONE">
-          Done
+        <mat-option value="COMPLETED">
+          Completed
         </mat-option>
 
         <mat-option value="CANCELLED">

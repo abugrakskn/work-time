@@ -14,6 +14,9 @@ import { CreateProjectRequest } from '../../../core/models/create-project-reques
 import { UpdateProjectRequest } from '../../../core/models/update-project-request';
 import { ProjectService } from '../../../core/services/project';
 
+import { toLocalDateString } from '../../../core/utils/date.utils';
+import { NotificationService } from '../../../core/services/notification';
+
 @Component({
   selector: 'app-create-project',
   imports: [
@@ -32,6 +35,7 @@ import { ProjectService } from '../../../core/services/project';
 export class CreateProject implements OnInit {
 
   private projectService = inject(ProjectService);
+  private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   protected router = inject(Router);
 
@@ -93,13 +97,15 @@ export class CreateProject implements OnInit {
     const request: CreateProjectRequest = {
       name: this.name,
       description: this.description,
-      startDate: this.toDateString(this.startDate),
-      endDate: this.toDateString(this.endDate),
+      startDate: toLocalDateString(this.startDate),
+      endDate: toLocalDateString(this.endDate),
       status: this.status
     };
 
     this.projectService.create(request).subscribe({
       next: () => {
+        this.notificationService.success('Project created successfully.');
+
         this.router.navigate(['/projects']);
       },
       error: (err) => {
@@ -113,16 +119,18 @@ export class CreateProject implements OnInit {
       name: this.name,
       description: this.description,
       startDate: this.startDate
-        ? this.toDateString(this.startDate)
+        ? toLocalDateString(this.startDate)
         : null,
       endDate: this.endDate
-        ? this.toDateString(this.endDate)
+        ? toLocalDateString(this.endDate)
         : null,
       status: this.status
     };
 
     this.projectService.update(this.projectId!, request).subscribe({
       next: () => {
+        this.notificationService.success('Project updated successfully.');
+
         this.router.navigate(['/projects', this.projectId]);
       },
       error: (err) => {
@@ -138,9 +146,5 @@ export class CreateProject implements OnInit {
     }
 
     this.router.navigate(['/projects']);
-  }
-
-  private toDateString(date: Date): string {
-    return date.toISOString().split('T')[0];
   }
 }

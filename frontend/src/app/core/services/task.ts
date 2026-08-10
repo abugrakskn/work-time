@@ -5,6 +5,8 @@ import { Task } from '../models/task';
 
 import { CreateTaskRequest } from '../models/create-task-request';
 import { UpdateTaskRequest } from '../models/update-task-request';
+import { TaskStatus } from '../models/task-status';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,7 @@ export class TaskService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api/tasks';
+  private readonly apiUrl = `${API_BASE_URL}/tasks`;
 
   getAll() {
     return this.http.get<Task[]>(this.apiUrl);
@@ -36,6 +38,13 @@ export class TaskService {
     return this.http.put<Task>(
       `${this.apiUrl}/${id}`,
       request
+    );
+  }
+
+  updateStatus(id: number, status: TaskStatus) {
+    return this.http.patch<Task>(
+      `${this.apiUrl}/${id}/status`,
+      { status }
     );
   }
 }

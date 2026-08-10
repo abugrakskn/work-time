@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Task } from '../../../core/models/task';
 import { TaskService } from '../../../core/services/task';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-task-detail',
@@ -23,6 +24,9 @@ export class TaskDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
+  private authService = inject(AuthService);
+
+  protected readonly currentUser = this.authService.currentUser;
 
   task = signal<Task | null>(null);
 
@@ -41,14 +45,25 @@ export class TaskDetail implements OnInit {
     });
   }
 
+  protected canEditTask(task: Task): boolean {
+    const user = this.currentUser();
+
+    if (!user) {
+      return false;
+    }
+
+    return user.role === 'ADMIN'
+      || task.assignedUserId === user.id;
+  }
+
   getStatusClass(status: string): string {
     switch (status) {
       case 'TODO':
         return 'status-todo';
       case 'IN_PROGRESS':
         return 'status-progress';
-      case 'DONE':
-        return 'status-done';
+      case 'COMPLETED':
+        return 'status-completed';
       case 'CANCELLED':
         return 'status-cancelled';
       default:

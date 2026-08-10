@@ -46,9 +46,22 @@
 
       <span class="spacer"></span>
 
-      <button mat-icon-button>
-        <mat-icon>account_circle</mat-icon>
-      </button>
+      @if (currentUser(); as user) {
+        <div class="user-summary">
+          <div class="user-details">
+            <span class="user-name">
+              {{ user.firstName }} {{ user.lastName }}
+            </span>
+
+            <span class="user-role">
+              {{ user.role }}
+            </span>
+          </div>
+
+          <mat-icon class="user-icon">account_circle</mat-icon>
+        </div>
+      }
+
     </mat-toolbar>
 
     <main class="content">
