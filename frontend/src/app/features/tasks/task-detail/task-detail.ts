@@ -24,7 +24,9 @@ export class TaskDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
-  protected readonly isAdmin = inject(AuthService).isAdmin;
+  private authService = inject(AuthService);
+
+  protected readonly currentUser = this.authService.currentUser;
 
   task = signal<Task | null>(null);
 
@@ -41,6 +43,17 @@ export class TaskDetail implements OnInit {
         console.error('Task could not be loaded.', err);
       }
     });
+  }
+
+  protected canEditTask(task: Task): boolean {
+    const user = this.currentUser();
+
+    if (!user) {
+      return false;
+    }
+
+    return user.role === 'ADMIN'
+      || task.assignedUserId === user.id;
   }
 
   getStatusClass(status: string): string {

@@ -37,7 +37,6 @@ export const routes: Routes = [
       {
         path: 'tasks/:id/edit',
         component: TaskForm,
-        canActivate: [adminGuard]
       },
       {
         path: 'tasks/:id',

@@ -4,7 +4,13 @@
 
     <mat-card-header>
       <mat-card-title>
-        {{ isEditMode() ? 'Edit Task' : 'Create Task' }}
+        @if (isStatusOnlyMode()) {
+          Update Task Status
+        } @else if (isEditMode()) {
+          Edit Task
+        } @else {
+          Create Task
+        }
       </mat-card-title>
     </mat-card-header>
 
@@ -22,6 +28,7 @@
             name="title"
             maxlength="100"
             [(ngModel)]="title"
+            [disabled]="isStatusOnlyMode()"
             required>
         </mat-form-field>
 
@@ -33,7 +40,8 @@
             name="description"
             rows="4"
             maxlength="1000"
-            [(ngModel)]="description">
+            [(ngModel)]="description"
+            [disabled]="isStatusOnlyMode()">
           </textarea>
         </mat-form-field>
 
@@ -43,20 +51,20 @@
             <mat-label>Due Date</mat-label>
 
             <input
-                matInput
-                [matDatepicker]="dueDatePicker"
-                [min]="minDate"
-                name="dueDate"
-                [(ngModel)]="dueDate">
+              matInput
+              [matDatepicker]="dueDatePicker"
+              [min]="minDate"
+              name="dueDate"
+              [(ngModel)]="dueDate"
+              [disabled]="isStatusOnlyMode()">
 
             <mat-datepicker-toggle
               matIconSuffix
-              [for]="dueDatePicker">
+              [for]="dueDatePicker"
+              [disabled]="isStatusOnlyMode()">
             </mat-datepicker-toggle>
 
-            <mat-datepicker
-              #dueDatePicker>
-            </mat-datepicker>
+            <mat-datepicker #dueDatePicker />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -67,7 +75,8 @@
               type="number"
               min="1"
               name="estimatedDurationMinutes"
-              [(ngModel)]="estimatedDurationMinutes">
+              [(ngModel)]="estimatedDurationMinutes"
+              [disabled]="isStatusOnlyMode()">
 
             <span matTextSuffix>min</span>
           </mat-form-field>
@@ -81,7 +90,8 @@
 
             <mat-select
               name="priority"
-              [(ngModel)]="priority">
+              [(ngModel)]="priority"
+              [disabled]="isStatusOnlyMode()">
 
               <mat-option value="LOW">
                 Low
@@ -140,6 +150,7 @@
           <mat-select
             name="projectId"
             [(ngModel)]="projectId"
+            [disabled]="isStatusOnlyMode()"
             required>
 
             @for (project of projects(); track project.id) {
@@ -160,7 +171,8 @@
             matInput
             type="number"
             name="assignedUserId"
-            [(ngModel)]="assignedUserId">
+            [(ngModel)]="assignedUserId"
+            [disabled]="isStatusOnlyMode()">
 
         </mat-form-field>
 
@@ -177,7 +189,13 @@
             mat-flat-button
             type="submit">
 
-            {{ isEditMode() ? 'Save Changes' : 'Create Task' }}
+            @if (isStatusOnlyMode()) {
+              Update Status
+            } @else if (isEditMode()) {
+              Save Changes
+            } @else {
+              Create Task
+            }
 
           </button>
 

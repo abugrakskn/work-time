@@ -1,4 +1,10 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -11,13 +17,16 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import { CreateTaskRequest } from '../../../core/models/create-task-request';
-import { UpdateTaskRequest } from '../../../core/models/update-task-request';
 import { Project } from '../../../core/models/project';
+import { TaskStatus } from '../../../core/models/task-status';
+import { UpdateTaskRequest } from '../../../core/models/update-task-request';
+
+import { AuthService } from '../../../core/services/auth';
+import { NotificationService } from '../../../core/services/notification';
 import { ProjectService } from '../../../core/services/project';
 import { TaskService } from '../../../core/services/task';
 
 import { toLocalDateString } from '../../../core/utils/date.utils';
-import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-task-form',
@@ -38,11 +47,20 @@ export class TaskForm implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private taskService = inject(TaskService);
+
+  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private projectService = inject(ProjectService);
+  private taskService = inject(TaskService);
+
+  protected readonly isAdmin = this.authService.isAdmin;
 
   isEditMode = signal(false);
+
+  protected readonly isStatusOnlyMode = computed(() => {
+    return this.isEditMode() && !this.isAdmin();
+  });
+
   taskId: number | null = null;
 
   projects = signal<Project[]>([]);
@@ -52,10 +70,10 @@ export class TaskForm implements OnInit {
   dueDate: Date | null = null;
   estimatedDurationMinutes: number | null = null;
   priority = 'MEDIUM';
-  status = 'TODO';
+  status: TaskStatus = 'TODO';
   projectId: number | null = null;
   assignedUserId: number | null = null;
-  
+
   minDate = new Date();
 
   ngOnInit() {
@@ -66,6 +84,7 @@ export class TaskForm implements OnInit {
     if (idParam) {
       this.isEditMode.set(true);
       this.taskId = Number(idParam);
+
       this.loadTask(this.taskId);
     }
   }
@@ -86,6 +105,7 @@ export class TaskForm implements OnInit {
       next: (task) => {
         this.title = task.title;
         this.description = task.description;
+
         this.dueDate = task.dueDate
           ? new Date(task.dueDate)
           : null;
@@ -105,15 +125,25 @@ export class TaskForm implements OnInit {
   }
 
   saveTask() {
+    if (this.isEditMode() && this.taskId) {
+      if (this.isAdmin()) {
+        if (!this.projectId) {
+          return;
+        }
+
+        this.updateTask();
+      } else {
+        this.updateTaskStatus();
+      }
+
+      return;
+    }
+
     if (!this.projectId) {
       return;
     }
 
-    if (this.isEditMode() && this.taskId) {
-      this.updateTask();
-    } else {
-      this.createTask();
-    }
+    this.createTask();
   }
 
   createTask() {
@@ -131,7 +161,9 @@ export class TaskForm implements OnInit {
 
     this.taskService.create(request).subscribe({
       next: (task) => {
-        this.notificationService.success('Task created successfully.');
+        this.notificationService.success(
+          'Task created successfully.'
+        );
 
         this.router.navigate(['/tasks', task.id]);
       },
@@ -157,7 +189,9 @@ export class TaskForm implements OnInit {
 
     this.taskService.update(this.taskId!, request).subscribe({
       next: () => {
-        this.notificationService.success('Task updated successfully.');
+        this.notificationService.success(
+          'Task updated successfully.'
+        );
 
         this.router.navigate(['/tasks', this.taskId]);
       },
@@ -167,7 +201,32 @@ export class TaskForm implements OnInit {
     });
   }
 
+  updateTaskStatus() {
+    this.taskService
+      .updateStatus(this.taskId!, this.status)
+      .subscribe({
+        next: () => {
+          this.notificationService.success(
+            'Task status updated successfully.'
+          );
+
+          this.router.navigate(['/tasks', this.taskId]);
+        },
+        error: (err) => {
+          console.error(
+            'Task status could not be updated.',
+            err
+          );
+        }
+      });
+  }
+
   cancel() {
+    if (this.isEditMode() && this.taskId) {
+      this.router.navigate(['/tasks', this.taskId]);
+      return;
+    }
+
     this.router.navigate(['/tasks']);
   }
 }

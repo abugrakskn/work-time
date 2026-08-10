@@ -1,3 +1,5 @@
+import { TaskStatus } from './task-status';
+
 export interface Task {
   id: number;
   title: string;
@@ -5,7 +7,7 @@ export interface Task {
   dueDate: string;
   estimatedDurationMinutes: number;
   priority: string;
-  status: string;
+  status: TaskStatus;
   projectId: number;
   projectName: string;
   assignedUserId: number | null;

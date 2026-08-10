@@ -13,7 +13,7 @@
 
       </a>
 
-      @if (isAdmin()) {
+      @if (canEditTask(task)) {
         <a
           mat-stroked-button
           [routerLink]="['/tasks', task.id, 'edit']">

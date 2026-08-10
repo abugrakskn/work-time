@@ -5,6 +5,7 @@ import { Task } from '../models/task';
 
 import { CreateTaskRequest } from '../models/create-task-request';
 import { UpdateTaskRequest } from '../models/update-task-request';
+import { TaskStatus } from '../models/task-status';
 import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
@@ -37,6 +38,13 @@ export class TaskService {
     return this.http.put<Task>(
       `${this.apiUrl}/${id}`,
       request
+    );
+  }
+
+  updateStatus(id: number, status: TaskStatus) {
+    return this.http.patch<Task>(
+      `${this.apiUrl}/${id}/status`,
+      { status }
     );
   }
 }
