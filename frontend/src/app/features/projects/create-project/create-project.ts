@@ -15,6 +15,7 @@ import { UpdateProjectRequest } from '../../../core/models/update-project-reques
 import { ProjectService } from '../../../core/services/project';
 
 import { toLocalDateString } from '../../../core/utils/date.utils';
+import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-create-project',
@@ -34,6 +35,7 @@ import { toLocalDateString } from '../../../core/utils/date.utils';
 export class CreateProject implements OnInit {
 
   private projectService = inject(ProjectService);
+  private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   protected router = inject(Router);
 
@@ -102,6 +104,8 @@ export class CreateProject implements OnInit {
 
     this.projectService.create(request).subscribe({
       next: () => {
+        this.notificationService.success('Project created successfully.');
+
         this.router.navigate(['/projects']);
       },
       error: (err) => {
@@ -125,6 +129,8 @@ export class CreateProject implements OnInit {
 
     this.projectService.update(this.projectId!, request).subscribe({
       next: () => {
+        this.notificationService.success('Project updated successfully.');
+
         this.router.navigate(['/projects', this.projectId]);
       },
       error: (err) => {

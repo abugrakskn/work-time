@@ -17,6 +17,7 @@ import { ProjectService } from '../../../core/services/project';
 import { TaskService } from '../../../core/services/task';
 
 import { toLocalDateString } from '../../../core/utils/date.utils';
+import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-task-form',
@@ -38,6 +39,7 @@ export class TaskForm implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private taskService = inject(TaskService);
+  private notificationService = inject(NotificationService);
   private projectService = inject(ProjectService);
 
   isEditMode = signal(false);
@@ -128,8 +130,10 @@ export class TaskForm implements OnInit {
     };
 
     this.taskService.create(request).subscribe({
-      next: () => {
-        this.router.navigate(['/tasks']);
+      next: (task) => {
+        this.notificationService.success('Task created successfully.');
+
+        this.router.navigate(['/tasks', task.id]);
       },
       error: (err) => {
         console.error('Task could not be created.', err);
@@ -153,6 +157,8 @@ export class TaskForm implements OnInit {
 
     this.taskService.update(this.taskId!, request).subscribe({
       next: () => {
+        this.notificationService.success('Task updated successfully.');
+
         this.router.navigate(['/tasks', this.taskId]);
       },
       error: (err) => {
