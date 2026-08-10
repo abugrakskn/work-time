@@ -15,7 +15,7 @@ import lombok.Setter;
 public class UpdateTaskStatusRequest {
 
     @Schema(description = "New status of the task",
-            example = "DONE")
+            example = "COMPLETED")
     @NotNull(message = "Status is required")
     private TaskStatus status;
 }

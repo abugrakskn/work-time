@@ -4,6 +4,7 @@ import com.worktime.dto.project.CreateProjectRequest;
 import com.worktime.dto.project.ProjectResponse;
 import com.worktime.dto.project.UpdateProjectRequest;
 import com.worktime.entity.Project;
+import com.worktime.exception.ResourceNotFoundException;
 import com.worktime.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class ProjectService{
 
     public ProjectResponse getProjectById(Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         return toResponse(project);
     }
@@ -66,7 +67,7 @@ public class ProjectService{
         }
         
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         project.setName(request.getName());
         project.setDescription(request.getDescription());
@@ -81,7 +82,7 @@ public class ProjectService{
 
     public void deleteProject(Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         projectRepository.delete(project);
     }
