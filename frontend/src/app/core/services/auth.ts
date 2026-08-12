@@ -38,4 +38,15 @@ export class AuthService {
       })
     );
   }
+
+  logout() {
+    return this.http.post<void>(
+      `${this.apiUrl}/logout`,
+      {}
+    ).pipe(
+      tap(() => {
+        this.currentUserState.set(null);
+      })
+    )
+  }
 }
