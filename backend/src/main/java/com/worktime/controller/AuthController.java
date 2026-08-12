@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,6 +94,31 @@ public class AuthController {
                 securityContext,
                 httpRequest,
                 httpResponse
+        );
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Log out",
+            description = "Invalidates the current HTTP session and clears the security context")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204",
+                        description = "Logout successful"),
+            @ApiResponse(responseCode = "401",
+                        description = "Authentication required")
+    })
+    public void logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) {
+        SecurityContextLogoutHandler logoutHandler =
+                new SecurityContextLogoutHandler();
+
+        logoutHandler.logout(
+                request,
+                response,
+                authentication
         );
     }
 

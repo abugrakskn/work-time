@@ -1,8 +1,19 @@
 .login-container {
-    width: 350px;
-    margin: 100px auto;
+  width: 350px;
+  margin: 100px auto;
+}
 
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.login-container h1 {
+  margin-bottom: 24px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-form mat-form-field,
+.login-form button {
+  width: 100%;
 }

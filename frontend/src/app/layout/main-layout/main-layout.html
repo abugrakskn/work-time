@@ -48,6 +48,7 @@
 
       @if (currentUser(); as user) {
         <div class="user-summary">
+
           <div class="user-details">
             <span class="user-name">
               {{ user.firstName }} {{ user.lastName }}
@@ -59,6 +60,17 @@
           </div>
 
           <mat-icon class="user-icon">account_circle</mat-icon>
+
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="logout()">
+
+            <mat-icon>logout</mat-icon>
+            Logout
+
+          </button>
+
         </div>
       }
 
