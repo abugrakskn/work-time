@@ -36,6 +36,18 @@
         <span>Projects</span>
       </a>
 
+      @if (isAdmin()) {
+        <a
+          routerLink="/users"
+          routerLinkActive="active"
+          class="nav-item">
+
+          <mat-icon>group</mat-icon>
+          <span>Users</span>
+
+        </a>
+      }
+
     </nav>
   </aside>
 

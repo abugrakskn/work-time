@@ -36,6 +36,8 @@ export class MainLayout {
 
   protected readonly currentUser =
           this.authService.currentUser;
+  protected readonly isAdmin =
+          this.authService.isAdmin;
 
   protected logout(): void {
     const confirmed = window.confirm(

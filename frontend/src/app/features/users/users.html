@@ -1,0 +1,176 @@
+<div class="users-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Users</h1>
+      <p>View and manage system users.</p>
+    </div>
+
+    <a
+      mat-flat-button
+      routerLink="/users/create">
+
+      <mat-icon>person_add</mat-icon>
+      Create User
+
+    </a>
+
+  </div>
+
+  <div class="filters">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Search Users</mat-label>
+
+      <mat-icon matPrefix>search</mat-icon>
+
+      <input
+        matInput
+        name="searchText"
+        [(ngModel)]="searchText"
+        (ngModelChange)="applyFilters()"
+        placeholder="Name or email">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+
+      <mat-select
+        name="selectedRole"
+        [(ngModel)]="selectedRole"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+          All Roles
+        </mat-option>
+
+        <mat-option value="ADMIN">
+          Admin
+        </mat-option>
+
+        <mat-option value="EMPLOYEE">
+          Employee
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        name="selectedStatus"
+        [(ngModel)]="selectedStatus"
+        (selectionChange)="applyFilters()">
+
+        <mat-option value="">
+          All Statuses
+        </mat-option>
+
+        <mat-option value="ACTIVE">
+          Active
+        </mat-option>
+
+        <mat-option value="INACTIVE">
+          Inactive
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="clearFilters()">
+
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear Filters
+
+    </button>
+
+  </div>
+
+  <div class="result-count">
+    {{ users().length }}
+    {{ users().length === 1 ? 'user' : 'users' }}
+  </div>
+
+  <div class="user-list">
+
+    @for (user of users(); track user.id) {
+
+      <mat-card class="user-card">
+
+        <div class="user-info">
+
+          <div class="identity">
+
+            <div class="avatar">
+              {{ user.firstName.charAt(0) }}
+              {{ user.lastName.charAt(0) }}
+            </div>
+
+            <div>
+              <h2>
+                {{ user.firstName }} {{ user.lastName }}
+              </h2>
+
+              <span class="email">
+                {{ user.email }}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="user-actions">
+
+            <div class="badges">
+
+              <span class="role-badge">
+                {{ user.role }}
+              </span>
+
+              <span
+                class="status-badge"
+                [class.inactive]="!user.active">
+
+                {{ user.active ? 'Active' : 'Inactive' }}
+
+              </span>
+
+            </div>
+
+            <a
+              mat-stroked-button
+              [routerLink]="['/users', user.id, 'edit']">
+
+              <mat-icon>edit</mat-icon>
+              Edit User
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </mat-card>
+
+    } @empty {
+
+      <mat-card class="empty-state">
+
+        <mat-icon>group_off</mat-icon>
+
+        <div>
+          <h3>No users found</h3>
+          <p>Try changing or clearing the filters.</p>
+        </div>
+
+      </mat-card>
+
+    }
+
+  </div>
+
+</div>

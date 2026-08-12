@@ -1,0 +1,166 @@
+.users-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 2fr)
+    minmax(160px, 1fr)
+    minmax(160px, 1fr)
+    auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.filters mat-form-field {
+  width: 100%;
+}
+
+.result-count {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.user-list {
+  display: grid;
+  gap: 16px;
+}
+
+.user-card {
+  padding: 20px;
+}
+
+.user-info,
+.identity,
+.user-actions,
+.badges {
+  display: flex;
+  align-items: center;
+}
+
+.user-info {
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.identity {
+  gap: 16px;
+  min-width: 0;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #3730a3;
+
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.user-info h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.email {
+  color: #6b7280;
+  overflow-wrap: anywhere;
+}
+
+.user-actions {
+  gap: 20px;
+}
+
+.badges {
+  gap: 8px;
+}
+
+.role-badge,
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-badge {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  padding: 32px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-state h3,
+.empty-state p {
+  margin: 0;
+}
+
+.empty-state p {
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .user-info {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .user-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-header,
+  .user-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

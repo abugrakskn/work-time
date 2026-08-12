@@ -1,0 +1,183 @@
+<div class="user-form-page">
+
+  <mat-card class="form-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        {{ isEditMode() ? 'Edit User' : 'Create User' }}
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        @if (isEditMode()) {
+          Update user information, role and account status.
+        } @else {
+          Create a new user account.
+        }
+      </mat-card-subtitle>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <form
+        class="user-form"
+        (ngSubmit)="saveUser()">
+
+        <div class="form-row">
+
+          <mat-form-field appearance="outline">
+            <mat-label>First Name</mat-label>
+
+            <input
+              matInput
+              type="text"
+              name="firstName"
+              maxlength="50"
+              [(ngModel)]="firstName"
+              [disabled]="isSaving()"
+              required>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Last Name</mat-label>
+
+            <input
+              matInput
+              type="text"
+              name="lastName"
+              maxlength="50"
+              [(ngModel)]="lastName"
+              [disabled]="isSaving()"
+              required>
+          </mat-form-field>
+
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+
+          <input
+            matInput
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            autocomplete="email"
+            [disabled]="isSaving()"
+            required>
+        </mat-form-field>
+
+        @if (!isEditMode()) {
+
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+
+            <input
+              matInput
+              type="password"
+              name="password"
+              minlength="8"
+              [(ngModel)]="password"
+              autocomplete="new-password"
+              [disabled]="isSaving()"
+              required>
+
+            <mat-hint>
+              Password must contain at least 8 characters.
+            </mat-hint>
+          </mat-form-field>
+
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>Role</mat-label>
+
+          <mat-select
+            name="role"
+            [(ngModel)]="role"
+            [disabled]="isSaving() || isOwnAccount()"
+            required>
+
+            <mat-option value="EMPLOYEE">
+              Employee
+            </mat-option>
+
+            <mat-option value="ADMIN">
+              Admin
+            </mat-option>
+
+          </mat-select>
+        </mat-form-field>
+
+        @if (isEditMode()) {
+
+          @if (isOwnAccount()) {
+
+            <div class="account-notice">
+              You cannot change your own role or deactivate
+              your own account. Changing your email will
+              require you to sign in again.
+            </div>
+
+          }
+
+          <div class="active-field">
+
+            <div>
+              <span class="field-title">
+                Active Account
+              </span>
+
+              <span class="field-description">
+                Inactive users cannot sign in or receive
+                new tasks.
+              </span>
+            </div>
+
+            <mat-slide-toggle
+              name="active"
+              [(ngModel)]="active"
+              [disabled]="isSaving() || isOwnAccount()">
+
+              {{ active ? 'Active' : 'Inactive' }}
+
+            </mat-slide-toggle>
+
+          </div>
+
+        }
+
+        <div class="actions">
+
+          <button
+            mat-button
+            type="button"
+            [disabled]="isSaving()"
+            (click)="cancel()">
+            Cancel
+          </button>
+
+          <button
+            mat-flat-button
+            type="submit"
+            [disabled]="isSaving()">
+
+            @if (isSaving()) {
+              Saving...
+            } @else if (isEditMode()) {
+              Save Changes
+            } @else {
+              Create User
+            }
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>
