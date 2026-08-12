@@ -1,0 +1,94 @@
+.user-form-page {
+  display: flex;
+  justify-content: center;
+}
+
+.form-card {
+  width: min(100%, 720px);
+}
+
+mat-card-header {
+  padding: 24px 24px 8px;
+}
+
+mat-card-title {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+mat-card-subtitle {
+  margin-top: 6px;
+}
+
+mat-card-content {
+  padding: 24px;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.account-notice {
+  padding: 12px 14px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+
+  background: #eff6ff;
+  color: #1e40af;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.active-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  padding: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.field-title,
+.field-description {
+  display: block;
+}
+
+.field-title {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.field-description {
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .active-field {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

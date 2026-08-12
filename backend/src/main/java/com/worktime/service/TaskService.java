@@ -10,7 +10,6 @@ import com.worktime.repository.ProjectRepository;
 import com.worktime.repository.TaskRepository;
 import com.worktime.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -27,7 +26,7 @@ public class TaskService {
     private final UserRepository userRepository;
 
     private User getCurrentUser(String email){
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
 

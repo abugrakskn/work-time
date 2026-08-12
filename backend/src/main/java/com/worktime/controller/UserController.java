@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,19 +66,23 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update the user information",
-                description = "Updates the user information")
+    @Operation(summary = "Update user information",
+                description = "Updates user information while protecting active administrator accounts")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
                     description = "User updated successfully"),
             @ApiResponse(responseCode = "400",
-                    description = "Invalid user data"),
+                    description = "Invalid user data or administrator update"),
             @ApiResponse(responseCode = "404",
                     description = "User not found"),
             @ApiResponse(responseCode = "409",
                     description = "Email is already in use")
     })
-    public UserResponse patchUser(@PathVariable Long id,@Valid @RequestBody UpdateUserRequest request){
-        return userService.patchUser(id, request);
+    public UserResponse patchUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest request,
+            Authentication authentication
+    ) {
+        return userService.patchUser(id, request, authentication.getName());
     }
 }

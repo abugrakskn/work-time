@@ -50,6 +50,27 @@ export const routes: Routes = [
             .then((component) => component.TaskDetail)
       },
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/users')
+            .then((component) => component.Users),
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'users/create',
+        loadComponent: () =>
+          import('./features/users/user-form/user-form')
+            .then((component) => component.UserForm),
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'users/:id/edit',
+        loadComponent: () =>
+          import('./features/users/user-form/user-form')
+            .then((component) => component.UserForm),
+        canActivate: [adminGuard]
+      },
+      {
         path: 'projects',
         loadComponent: () =>
           import('./features/projects/projects')
