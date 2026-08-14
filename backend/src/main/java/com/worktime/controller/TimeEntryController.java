@@ -50,4 +50,23 @@ public class TimeEntryController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @PostMapping("/stop")
+    @Operation(summary = "Stop the active timer",
+            description = "Stops the active time entry for the authenticated user.")
+    @ApiResponses({
+             @ApiResponse(responseCode = "200",
+                        description = "Time entry stopped successfully"),
+            @ApiResponse(responseCode = "401",
+                        description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                        description = "User not found"),
+            @ApiResponse(responseCode = "409",
+                        description = "User does not have an active time entry")
+    })
+    public ResponseEntity<TimeEntryResponse> stopTimer(Authentication authentication) {
+        TimeEntryResponse timeEntryResponse = timeEntryService.stopTimer(authentication.getName());
+
+        return ResponseEntity.ok(timeEntryResponse);
+    }
 }
