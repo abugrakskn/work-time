@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -31,8 +32,7 @@ public class TimeEntryService {
             String email,
             StartTimeEntryRequest request
     ) {
-        User user = userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+        User user = getCurrentUser(email);
 
         if (timeEntryRepository.findByUserAndEndTimeIsNull(user).isPresent()) {
             throw new ResourceConflictException("User already has an active time entry.");
@@ -59,19 +59,50 @@ public class TimeEntryService {
 
         TimeEntry savedTimeEntry = timeEntryRepository.save(timeEntry);
 
+        return toResponse(savedTimeEntry);
+    }
+
+    @Transactional
+    public TimeEntryResponse stopTimer(String email) {
+        User user = getCurrentUser(email);
+
+        TimeEntry activeTimeEntry = timeEntryRepository
+                .findByUserAndEndTimeIsNull(user)
+                .orElseThrow(() -> new ResourceConflictException("User does not have an active time entry."));
+
+        LocalDateTime endTime = LocalDateTime.now();
+        long durationMinutes = Duration.between(
+                activeTimeEntry.getStartTime(),
+                endTime
+        ).toMinutes();
+        int calculatedDurationMinutes = Math.toIntExact(durationMinutes);
+
+        activeTimeEntry.setEndTime(endTime);
+        activeTimeEntry.setDurationMinutes(calculatedDurationMinutes);
+        TimeEntry savedTimeEntry = timeEntryRepository.save(activeTimeEntry);
+
+        return toResponse(savedTimeEntry);
+    }
+
+    private TimeEntryResponse toResponse(TimeEntry timeEntry) {
         return new TimeEntryResponse(
-                savedTimeEntry.getId(),
-                savedTimeEntry.getUser().getId(),
-                savedTimeEntry.getUser().getFirstName()
-                    + " "
-                    + savedTimeEntry.getUser().getLastName(),
-                savedTimeEntry.getTask().getId(),
-                savedTimeEntry.getTask().getTitle(),
-                savedTimeEntry.getStartTime(),
-                savedTimeEntry.getEndTime(),
-                savedTimeEntry.getDurationMinutes(),
-                savedTimeEntry.getDescription()
+                timeEntry.getId(),
+                timeEntry.getUser().getId(),
+                timeEntry.getUser().getFirstName()
+                        + " "
+                        + timeEntry.getUser().getLastName(),
+                timeEntry.getTask().getId(),
+                timeEntry.getTask().getTitle(),
+                timeEntry.getStartTime(),
+                timeEntry.getEndTime(),
+                timeEntry.getDurationMinutes(),
+                timeEntry.getDescription()
         );
+    }
+
+    private User getCurrentUser(String email) {
+        return userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
 
 }
