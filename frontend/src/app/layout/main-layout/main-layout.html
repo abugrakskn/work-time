@@ -21,6 +21,14 @@
       </a>
 
       <a
+        routerLink="/projects"
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>folder</mat-icon>
+        <span>Projects</span>
+      </a>
+
+      <a
         routerLink="/tasks"
         routerLinkActive="active"
         class="nav-item">
@@ -29,11 +37,11 @@
       </a>
 
       <a
-        routerLink="/projects"
+        routerLink="/time-entries"
         routerLinkActive="active"
         class="nav-item">
-        <mat-icon>folder</mat-icon>
-        <span>Projects</span>
+        <mat-icon>timer</mat-icon>
+        <span>Time Tracking</span>
       </a>
 
       @if (isAdmin()) {

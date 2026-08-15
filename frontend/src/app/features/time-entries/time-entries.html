@@ -1,0 +1,384 @@
+<div class="time-entry-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Time Tracking</h1>
+
+      <p>
+        Track your current work and review your time entries.
+      </p>
+    </div>
+  </header>
+
+  <section class="top-grid">
+
+    @if (activeTimeEntry(); as activeEntry) {
+
+      <mat-card class="timer-card active-timer-card">
+
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="timer-icon">
+            timer
+          </mat-icon>
+
+          <mat-card-title>
+            Active Timer
+          </mat-card-title>
+
+          <mat-card-subtitle>
+            {{ activeEntry.taskTitle }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <div class="elapsed-time">
+            {{ elapsedTime() }}
+          </div>
+
+          <div class="timer-information">
+
+            <div>
+              <span class="information-label">
+                Started
+              </span>
+
+              <span>
+                {{ formatDate(activeEntry.startTime) }}
+              </span>
+            </div>
+
+            @if (activeEntry.description) {
+              <div>
+                <span class="information-label">
+                  Description
+                </span>
+
+                <span>
+                  {{ activeEntry.description }}
+                </span>
+              </div>
+            }
+
+          </div>
+
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+
+          <button
+            mat-flat-button
+            class="stop-button"
+            type="button"
+            [disabled]="isStopping()"
+            (click)="stopTimer()">
+
+            <mat-icon>stop</mat-icon>
+
+            {{ isStopping() ? 'Stopping...' : 'Stop Timer' }}
+
+          </button>
+
+        </mat-card-actions>
+
+      </mat-card>
+
+    } @else {
+
+      <mat-card class="timer-card">
+
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="timer-icon">
+            play_circle
+          </mat-icon>
+
+          <mat-card-title>
+            Start Timer
+          </mat-card-title>
+
+          <mat-card-subtitle>
+            Select a task and begin tracking your work.
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <form
+            #timerForm="ngForm"
+            class="entry-form"
+            (ngSubmit)="startTimer()">
+
+            <mat-form-field appearance="outline">
+              <mat-label>Task</mat-label>
+
+              <mat-select
+                name="selectedTaskId"
+                [(ngModel)]="selectedTaskId"
+                required>
+
+                @for (
+                  task of trackableTasks();
+                  track task.id
+                ) {
+                  <mat-option [value]="task.id">
+                    {{ task.title }}
+                  </mat-option>
+                }
+
+              </mat-select>
+
+              @if (trackableTasks().length === 0) {
+                <mat-hint>
+                  No trackable tasks are available.
+                </mat-hint>
+              }
+
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Description</mat-label>
+
+              <textarea
+                matInput
+                name="timerDescription"
+                rows="3"
+                maxlength="1000"
+                [(ngModel)]="timerDescription">
+              </textarea>
+
+              <mat-hint>
+                Optional
+              </mat-hint>
+            </mat-form-field>
+
+            <button
+              mat-flat-button
+              type="submit"
+              [disabled]="
+                timerForm.invalid
+                || isStarting()
+              ">
+
+              <mat-icon>play_arrow</mat-icon>
+
+              {{ isStarting() ? 'Starting...' : 'Start Timer' }}
+
+            </button>
+
+          </form>
+
+        </mat-card-content>
+
+      </mat-card>
+
+    }
+
+    <mat-card class="manual-entry-card">
+
+      <mat-card-header>
+        <mat-icon mat-card-avatar class="manual-icon">
+          edit_calendar
+        </mat-icon>
+
+        <mat-card-title>
+          Manual Entry
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          Add work that was not tracked with the timer.
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <form
+          #manualForm="ngForm"
+          class="entry-form"
+          (ngSubmit)="createManualTimeEntry()">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Task</mat-label>
+
+            <mat-select
+              name="manualTaskId"
+              [(ngModel)]="manualTaskId"
+              required>
+
+              @for (task of tasks(); track task.id) {
+                <mat-option [value]="task.id">
+                  {{ task.title }}
+                </mat-option>
+              }
+
+            </mat-select>
+          </mat-form-field>
+
+          <div class="date-row">
+
+            <label class="date-field">
+              <span class="date-time-label">
+                Start Time
+              </span>
+
+              <input
+                class="date-time-input"
+                type="datetime-local"
+                name="manualStartTime"
+                [(ngModel)]="manualStartTime"
+                required>
+            </label>
+
+            <label class="date-time-field">
+              <span class="date-time-label">
+                End Time
+                <span aria-hidden="true">*</span>
+              </span>
+
+            <input
+              class="date-time-input"
+              type="datetime-local"
+              name="manualEndTime"
+              [(ngModel)]="manualEndTime"
+              required>
+            </label>
+
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+
+            <textarea
+              matInput
+              name="manualDescription"
+              rows="3"
+              maxlength="1000"
+              [(ngModel)]="manualDescription">
+            </textarea>
+
+            <mat-hint>
+              Optional
+            </mat-hint>
+          </mat-form-field>
+
+          <button
+            mat-flat-button
+            type="submit"
+            [disabled]="
+              manualForm.invalid
+              || isCreatingManual()
+            ">
+
+            <mat-icon>add</mat-icon>
+
+            {{
+              isCreatingManual()
+                ? 'Saving...'
+                : 'Add Manual Entry'
+            }}
+
+          </button>
+
+        </form>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </section>
+
+  <mat-card class="history-card">
+
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="history-icon">
+        history
+      </mat-icon>
+
+      <mat-card-title>
+        Time Entry History
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        Your records are ordered from newest to oldest.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      @if (timeEntries().length === 0) {
+
+        <div class="empty-state">
+          <mat-icon>schedule</mat-icon>
+
+          <p>No time entries have been recorded yet.</p>
+        </div>
+
+      } @else {
+
+        <div class="table-container">
+
+          <table class="history-table">
+
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Duration</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (
+                timeEntry of timeEntries();
+                track timeEntry.id
+              ) {
+                <tr>
+                  <td>
+                    <span class="task-title">
+                      {{ timeEntry.taskTitle }}
+                    </span>
+                  </td>
+
+                  <td>
+                    {{ formatDate(timeEntry.startTime) }}
+                  </td>
+
+                  <td>
+                    {{ formatDate(timeEntry.endTime) }}
+                  </td>
+
+                  <td>
+                    <span
+                      class="duration"
+                      [class.running]="
+                        timeEntry.durationMinutes === null
+                      ">
+                      {{
+                        formatDuration(
+                          timeEntry.durationMinutes
+                        )
+                      }}
+                    </span>
+                  </td>
+
+                  <td>
+                    {{ timeEntry.description || '—' }}
+                  </td>
+                </tr>
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

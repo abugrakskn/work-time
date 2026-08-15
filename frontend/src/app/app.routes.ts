@@ -25,6 +25,12 @@ export const routes: Routes = [
             .then((component) => component.Dashboard)
       },
       {
+        path: 'time-entries',
+        loadComponent: () =>
+          import('./features/time-entries/time-entries')
+            .then((component) => component.TimeEntries)
+      },
+      {
         path: 'tasks',
         loadComponent: () =>
           import('./features/tasks/tasks')

@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -123,6 +125,24 @@ public class TimeEntryService {
                 .build();
         TimeEntry savedTimeEntry = timeEntryRepository.save(timeEntry);
         return toResponse(savedTimeEntry);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<TimeEntryResponse> getActiveTimeEntry(String email) {
+        User user = getCurrentUser(email);
+        return timeEntryRepository
+                .findByUserAndEndTimeIsNull(user)
+                .map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TimeEntryResponse> getTimeEntries(String email) {
+        User user = getCurrentUser(email);
+        return timeEntryRepository
+                .findByUserOrderByStartTimeDesc(user)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     private TimeEntryResponse toResponse(TimeEntry timeEntry) {
