@@ -1,5 +1,6 @@
 package com.worktime.service;
 
+import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
 import com.worktime.dto.timeentry.StartTimeEntryRequest;
 import com.worktime.dto.timeentry.TimeEntryResponse;
 import com.worktime.entity.Task;
@@ -81,6 +82,46 @@ public class TimeEntryService {
         activeTimeEntry.setDurationMinutes(calculatedDurationMinutes);
         TimeEntry savedTimeEntry = timeEntryRepository.save(activeTimeEntry);
 
+        return toResponse(savedTimeEntry);
+    }
+
+    @Transactional
+    public TimeEntryResponse createManualTimeEntry(
+            String email,
+            CreateManualTimeEntryRequest request
+    ) {
+        User user = getCurrentUser(email);
+        Task task = taskRepository.findById(request.getTaskId())
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
+        if (!user.isAdmin() && !task.isAssignedTo(user)) {
+            throw new AccessDeniedException("You do not have permission to create time entry for this task.");
+        }
+
+        LocalDateTime startTime = request.getStartTime();
+        LocalDateTime endTime = request.getEndTime();
+        LocalDateTime now = LocalDateTime.now();
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalArgumentException("End time must be after start time.");
+        }
+        if (startTime.isAfter(now) || endTime.isAfter(now)) {
+            throw new IllegalArgumentException("Manual time entries cannot contain future dates.");
+        }
+
+        long durationMinutes = Duration.between(startTime, endTime).toMinutes();
+        if (durationMinutes < 1) {
+            throw new IllegalArgumentException("Time entry duration must be at least one minute.");
+        }
+        int calculatedDurationMinutes = Math.toIntExact(durationMinutes);
+
+        TimeEntry timeEntry = TimeEntry.builder()
+                .user(user)
+                .task(task)
+                .startTime(startTime)
+                .endTime(endTime)
+                .durationMinutes(calculatedDurationMinutes)
+                .description(request.getDescription())
+                .build();
+        TimeEntry savedTimeEntry = timeEntryRepository.save(timeEntry);
         return toResponse(savedTimeEntry);
     }
 

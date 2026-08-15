@@ -1,5 +1,6 @@
 package com.worktime.controller;
 
+import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
 import com.worktime.dto.timeentry.StartTimeEntryRequest;
 import com.worktime.dto.timeentry.TimeEntryResponse;
 import com.worktime.service.TimeEntryService;
@@ -69,4 +70,34 @@ public class TimeEntryController {
 
         return ResponseEntity.ok(timeEntryResponse);
     }
+
+    @PostMapping("/manual")
+    @Operation(summary = "Create a manual time entry",
+            description = "Creates a completed time entry and calculates its duration from the supplied start and end times.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201",
+                        description = "Manual time entry created successfully"),
+            @ApiResponse(responseCode = "400",
+                        description = "Invalid dates, duration or request"),
+            @ApiResponse(responseCode = "401",
+                        description = "Authentication required"),
+            @ApiResponse(responseCode = "403",
+                        description = "User does not have permission to create a time entry for this task"),
+            @ApiResponse(responseCode = "404",
+                        description = "User or task not found")
+    })
+    public ResponseEntity<TimeEntryResponse> createManualTimeEntry(
+            Authentication authentication,
+            @Valid @RequestBody CreateManualTimeEntryRequest request
+    ) {
+        TimeEntryResponse response =
+                timeEntryService.createManualTimeEntry(
+                        authentication.getName(),
+                        request
+                );
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
 }
