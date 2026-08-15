@@ -1,0 +1,267 @@
+:host {
+  display: block;
+}
+
+.time-entry-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+
+.timer-card,
+.manual-entry-card,
+.history-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+.active-timer-card {
+  border-color: #93c5fd;
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #eff6ff 100%
+    );
+}
+
+.timer-icon,
+.manual-icon,
+.history-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: #2563eb;
+  border-radius: 12px;
+}
+
+.manual-icon {
+  background: #7c3aed;
+}
+
+.history-icon {
+  background: #475569;
+}
+
+mat-card-content {
+  padding-top: 24px;
+}
+
+.entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.elapsed-time {
+  margin: 12px 0 24px;
+  color: #1d4ed8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(42px, 6vw, 64px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-align: center;
+}
+
+.timer-information {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timer-information > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.information-label {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stop-button {
+  color: #ffffff;
+  background: #dc2626;
+}
+
+.stop-button:disabled {
+  background: #d1d5db;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+}
+
+.history-table th {
+  color: #64748b;
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.history-table td {
+  color: #374151;
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.history-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.task-title {
+  color: #111827;
+  font-weight: 600;
+}
+
+.duration {
+  display: inline-flex;
+  padding: 4px 10px;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.duration.running {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+}
+
+.empty-state p {
+  margin: 12px 0 0;
+}
+
+@media (max-width: 900px) {
+  .top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .time-entry-page {
+    gap: 16px;
+  }
+
+  .date-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .date-time-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-time-label {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.date-time-label span {
+  color: #dc2626;
+}
+
+.date-time-input {
+  min-height: 52px;
+  padding: 0 14px;
+  color: #111827;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.date-time-input:hover {
+  border-color: #94a3b8;
+}
+
+.date-time-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+  .elapsed-time {
+    font-size: 38px;
+    letter-spacing: 2px;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 12px;
+  }
+}

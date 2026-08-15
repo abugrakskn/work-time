@@ -14,12 +14,53 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/time-entries")
 @RequiredArgsConstructor
 public class TimeEntryController {
 
     private final TimeEntryService timeEntryService;
+
+    @GetMapping
+    @Operation(summary = "Get time entries",
+                description = "Returns the authenticated user's time entries ordered from newest to oldest.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                        description = "Time entries returned successfully"),
+            @ApiResponse(responseCode = "401",
+                        description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                        description = "User not found")
+    })
+    public ResponseEntity<List<TimeEntryResponse>> getTimeEntries(Authentication authentication) {
+        List<TimeEntryResponse> response =
+                timeEntryService.getTimeEntries(authentication.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/active")
+    @Operation(summary = "Get the active time entry",
+            description = "Returns the authenticated user's active time entry if one exists.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Active time entry returned successfully"),
+            @ApiResponse(responseCode = "204",
+                    description = "User does not have an active time entry"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found")
+    })
+    public ResponseEntity<TimeEntryResponse> getActiveTimeEntry(Authentication authentication) {
+        return timeEntryService
+                .getActiveTimeEntry(authentication.getName())
+                .map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.noContent().build()
+                );
+    }
 
     @PostMapping("/start")
     @Operation(summary = "Start a timer",
