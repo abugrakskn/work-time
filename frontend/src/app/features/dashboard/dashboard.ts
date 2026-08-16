@@ -1,9 +1,11 @@
 import {
   Component,
   OnInit,
+  computed,
   inject,
   signal
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -24,9 +26,16 @@ import {
   toLocalDateString
 } from '../../core/utils/date.utils';
 
+interface ChartDataPoint {
+  date: string;
+  label: string;
+  durationMinutes: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   imports: [
+    FormsModule,
     RouterLink,
     MatButtonModule,
     MatCardModule,
@@ -43,6 +52,9 @@ export class Dashboard implements OnInit {
   protected readonly overdueTasks =
     signal<Task[]>([]);
 
+  protected readonly timeEntries =
+    signal<TimeEntry[]>([]);
+
   protected readonly dailySummary =
     signal<TimeSummary | null>(null);
 
@@ -53,6 +65,108 @@ export class Dashboard implements OnInit {
     signal<TimeEntry | null>(null);
 
   protected readonly isLoading = signal(true);
+
+  protected readonly chartEndDate = signal(
+    toLocalDateString(new Date())
+  );
+
+  protected readonly chartStartDate = signal(
+    this.getDateDaysAgo(6)
+  );
+
+  protected readonly isChartRangeInvalid =
+    computed(() =>
+      !this.chartStartDate()
+      || !this.chartEndDate()
+      || this.chartStartDate() > this.chartEndDate()
+    );
+
+  protected readonly chartData = computed<
+    ChartDataPoint[]
+  >(() => {
+    if (this.isChartRangeInvalid()) {
+      return [];
+    }
+
+    const totalsByDate = new Map<string, number>();
+
+    for (const timeEntry of this.timeEntries()) {
+      if (timeEntry.durationMinutes === null) {
+        continue;
+      }
+
+      const entryDate =
+        timeEntry.startTime.slice(0, 10);
+
+      if (
+        entryDate < this.chartStartDate()
+        || entryDate > this.chartEndDate()
+      ) {
+        continue;
+      }
+
+      const currentTotal =
+        totalsByDate.get(entryDate) ?? 0;
+
+      totalsByDate.set(
+        entryDate,
+        currentTotal + timeEntry.durationMinutes
+      );
+    }
+
+    const dataPoints: ChartDataPoint[] = [];
+
+    const currentDate = new Date(
+      `${this.chartStartDate()}T00:00:00`
+    );
+
+    const endDate = new Date(
+      `${this.chartEndDate()}T00:00:00`
+    );
+
+    while (currentDate <= endDate) {
+      const date = toLocalDateString(currentDate);
+
+      dataPoints.push({
+        date,
+        label: currentDate.toLocaleDateString(
+          undefined,
+          {
+            day: '2-digit',
+            month: 'short'
+          }
+        ),
+        durationMinutes:
+          totalsByDate.get(date) ?? 0
+      });
+
+      currentDate.setDate(
+        currentDate.getDate() + 1
+      );
+    }
+
+    return dataPoints;
+  });
+
+  protected readonly chartTotalMinutes =
+    computed(() =>
+      this.chartData().reduce(
+        (total, dataPoint) =>
+          total + dataPoint.durationMinutes,
+        0
+      )
+    );
+
+  protected readonly chartMaximumMinutes =
+    computed(() =>
+      Math.max(
+        1,
+        ...this.chartData().map(
+          (dataPoint) =>
+            dataPoint.durationMinutes
+        )
+      )
+    );
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -73,6 +187,21 @@ export class Dashboard implements OnInit {
     }
 
     return `${hours}h ${minutes}m`;
+  }
+
+  protected chartBarHeight(
+    durationMinutes: number
+  ): number {
+    if (durationMinutes === 0) {
+      return 3;
+    }
+
+    return Math.max(
+      8,
+      durationMinutes
+      / this.chartMaximumMinutes()
+      * 100
+    );
   }
 
   protected overdueDays(dueDate: string): number {
@@ -112,6 +241,13 @@ export class Dashboard implements OnInit {
     return `priority-${priority.toLowerCase()}`;
   }
 
+  private getDateDaysAgo(days: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+
+    return toLocalDateString(date);
+  }
+
   private loadDashboardData(): void {
     const today = toLocalDateString(new Date());
 
@@ -120,6 +256,9 @@ export class Dashboard implements OnInit {
     forkJoin({
       overdueTasks:
         this.taskService.getOverdue(),
+
+      timeEntries:
+        this.timeEntryService.getAll(),
 
       dailySummary:
         this.timeEntryService.getDailySummary(today),
@@ -139,6 +278,10 @@ export class Dashboard implements OnInit {
         next: (response) => {
           this.overdueTasks.set(
             response.overdueTasks
+          );
+
+          this.timeEntries.set(
+            response.timeEntries
           );
 
           this.dailySummary.set(

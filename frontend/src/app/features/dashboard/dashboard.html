@@ -151,6 +151,117 @@
 
   </section>
 
+  <mat-card class="chart-card">
+
+  <div class="chart-header">
+
+    <div>
+      <h2>Tracked Time</h2>
+      <p>Completed time entries by day.</p>
+    </div>
+
+    <div class="chart-filters">
+
+      <label>
+        <span>Start Date</span>
+
+        <input
+          type="date"
+          [ngModel]="chartStartDate()"
+          (ngModelChange)="chartStartDate.set($event)">
+      </label>
+
+      <label>
+        <span>End Date</span>
+
+        <input
+          type="date"
+          [ngModel]="chartEndDate()"
+          (ngModelChange)="chartEndDate.set($event)">
+      </label>
+
+    </div>
+
+  </div>
+
+  @if (isChartRangeInvalid()) {
+
+    <div class="chart-message error-message">
+      <mat-icon>error</mat-icon>
+      End date must be on or after start date.
+    </div>
+
+  } @else if (isLoading()) {
+
+    <div class="chart-message">
+      <mat-icon>hourglass_empty</mat-icon>
+      Loading chart data...
+    </div>
+
+  } @else {
+
+    <div class="chart-total">
+      <span>Selected period total</span>
+
+      <strong>
+        {{ formatDuration(chartTotalMinutes()) }}
+      </strong>
+    </div>
+
+    <div class="chart-scroll">
+
+      <div class="bar-chart">
+
+        @for (
+          dataPoint of chartData();
+          track dataPoint.date
+        ) {
+
+          <div
+            class="bar-column"
+            [attr.title]="
+              dataPoint.label
+              + ': '
+              + formatDuration(
+                  dataPoint.durationMinutes
+                )
+            ">
+
+            <span class="bar-value">
+              {{
+                formatDuration(
+                  dataPoint.durationMinutes
+                )
+              }}
+            </span>
+
+            <div class="bar-track">
+              <div
+                class="bar-fill"
+                [style.height.%]="
+                  chartBarHeight(
+                    dataPoint.durationMinutes
+                  )
+                ">
+              </div>
+            </div>
+
+            <span class="bar-label">
+              {{ dataPoint.label }}
+            </span>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  }
+
+</mat-card>
+
   <mat-card class="overdue-section">
 
     <mat-card-header>
