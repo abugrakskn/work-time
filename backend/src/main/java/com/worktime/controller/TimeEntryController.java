@@ -3,17 +3,20 @@ package com.worktime.controller;
 import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
 import com.worktime.dto.timeentry.StartTimeEntryRequest;
 import com.worktime.dto.timeentry.TimeEntryResponse;
+import com.worktime.dto.timeentry.TimeSummaryResponse;
 import com.worktime.service.TimeEntryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,6 +63,62 @@ public class TimeEntryController {
                 .orElseGet(() ->
                         ResponseEntity.noContent().build()
                 );
+    }
+
+    @GetMapping("/summary/daily")
+    @Operation(summary = "Daily time summary",
+            description = "Returns the authenticated user's total duration for the specified day.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Summary returned successfully"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid or missing date"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found")
+    })
+    public ResponseEntity<TimeSummaryResponse> getDailySummary(
+            Authentication authentication,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        TimeSummaryResponse response =
+                timeEntryService.getDailySummary(
+                        authentication.getName(),
+                        date
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/summary/weekly")
+    @Operation(summary = "Weekly time summary",
+            description = "Returns the authenticated user's total duration for the week containing the specified date.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Summary returned successfully"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid or missing date"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found")
+    })
+    public ResponseEntity<TimeSummaryResponse> getWeeklySummary(
+            Authentication authentication,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        TimeSummaryResponse response =
+                timeEntryService.getWeeklySummary(
+                        authentication.getName(),
+                        date
+                );
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/start")

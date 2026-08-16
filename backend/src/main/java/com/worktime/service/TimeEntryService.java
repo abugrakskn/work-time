@@ -3,6 +3,7 @@ package com.worktime.service;
 import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
 import com.worktime.dto.timeentry.StartTimeEntryRequest;
 import com.worktime.dto.timeentry.TimeEntryResponse;
+import com.worktime.dto.timeentry.TimeSummaryResponse;
 import com.worktime.entity.Task;
 import com.worktime.entity.TaskStatus;
 import com.worktime.entity.TimeEntry;
@@ -17,8 +18,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,6 +147,40 @@ public class TimeEntryService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TimeSummaryResponse getDailySummary(String email, LocalDate date) {
+        User user = getCurrentUser(email);
+
+        LocalDateTime startTime = date.atStartOfDay();
+        LocalDateTime endTimeExclusive = date.plusDays(1).atStartOfDay();
+        long totalDurationMinutes = timeEntryRepository
+                .calculateTotalDurationMinutes(
+                        user,
+                        startTime,
+                        endTimeExclusive
+                );
+
+        return new TimeSummaryResponse(date, date, totalDurationMinutes);
+    }
+
+    @Transactional(readOnly = true)
+    public TimeSummaryResponse getWeeklySummary(String email, LocalDate date) {
+        User user = getCurrentUser(email);
+
+        LocalDate weekStart = date.with(
+                TemporalAdjusters.previousOrSame(
+                        DayOfWeek.MONDAY
+                )
+        );
+        LocalDate weekEnd = weekStart.plusDays(6);
+        LocalDateTime startTime = weekStart.atStartOfDay();
+        LocalDateTime endTimeExclusive = weekEnd.plusDays(1).atStartOfDay();
+
+        long totalDurationMinutes = timeEntryRepository
+                .calculateTotalDurationMinutes(user, startTime, endTimeExclusive);
+        return new TimeSummaryResponse(weekStart, weekEnd, totalDurationMinutes);
     }
 
     private TimeEntryResponse toResponse(TimeEntry timeEntry) {
