@@ -36,11 +36,30 @@ public class TaskController {
 
     @GetMapping
     @Operation(summary = "Get all tasks",
-                description = "Returns all tasks in the system")
+                description = "Returns tasks accessible to the authenticated user")
     @ApiResponse(responseCode = "200",
             description = "Tasks retrieved successfully")
     public List<TaskResponse> getAllTasks(Authentication authentication){
         return taskService.getAllTasks(authentication.getName());
+    }
+
+    @GetMapping("/overdue")
+    @Operation(summary = "Get overdue tasks",
+            description = "Returns open tasks with a due date before today that are accessible to the authenticated user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Overdue tasks retrieved successfully"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found")
+    })
+    public List<TaskResponse> getOverdueTasks(
+            Authentication authentication
+    ) {
+        return taskService.getOverdueTasks(
+                authentication.getName()
+        );
     }
 
     @GetMapping("/{id}")

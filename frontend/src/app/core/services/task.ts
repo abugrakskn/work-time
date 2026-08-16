@@ -21,6 +21,12 @@ export class TaskService {
     return this.http.get<Task[]>(this.apiUrl);
   }
 
+  getOverdue() {
+  return this.http.get<Task[]>(
+    `${this.apiUrl}/overdue`
+  );
+}
+
   getById(id: number) {
     return this.http.get<Task>(
       `${this.apiUrl}/${id}`

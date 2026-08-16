@@ -1,4 +1,149 @@
-<div class="page-header">
-  <h1>Dashboard</h1>
-  <p>Welcome to WorkTime.</p>
+<div class="dashboard-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome to WorkTime.</p>
+    </div>
+  </header>
+
+  <mat-card class="overdue-section">
+
+    <mat-card-header>
+
+      <div
+        mat-card-avatar
+        class="section-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
+
+      <mat-card-title>
+        Overdue Tasks
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        Open tasks with a due date before today.
+      </mat-card-subtitle>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      @if (isLoading()) {
+
+        <div class="state-message">
+          <mat-icon>hourglass_empty</mat-icon>
+          <span>Loading overdue tasks...</span>
+        </div>
+
+      } @else if (overdueTasks().length === 0) {
+
+        <div class="state-message success-state">
+          <mat-icon>check_circle</mat-icon>
+
+          <div>
+            <strong>No overdue tasks</strong>
+            <span>Everything is currently on schedule.</span>
+          </div>
+        </div>
+
+      } @else {
+
+        <div class="section-summary">
+
+          <span class="overdue-count">
+            {{ overdueTasks().length }}
+          </span>
+
+          <span>
+            {{
+              overdueTasks().length === 1
+                ? 'task requires attention'
+                : 'tasks require attention'
+            }}
+          </span>
+
+        </div>
+
+        <div class="overdue-list">
+
+          @for (
+            task of overdueTasks();
+            track task.id
+          ) {
+
+            <article class="overdue-task">
+
+              <div class="task-main">
+
+                <div class="task-heading">
+
+                  <a
+                    class="task-title"
+                    [routerLink]="['/tasks', task.id]">
+                    {{ task.title }}
+                  </a>
+
+                  <span
+                    class="priority"
+                    [class]="priorityClass(task.priority)">
+                    {{ task.priority }}
+                  </span>
+
+                </div>
+
+                <div class="task-metadata">
+
+                  <span>
+                    <mat-icon>folder</mat-icon>
+                    {{ task.projectName }}
+                  </span>
+
+                  @if (task.assignedUserName) {
+                    <span>
+                      <mat-icon>person</mat-icon>
+                      {{ task.assignedUserName }}
+                    </span>
+                  }
+
+                  <span>
+                    <mat-icon>event_busy</mat-icon>
+                    Due {{ formatDate(task.dueDate) }}
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div class="overdue-information">
+
+                <span class="overdue-label">
+                  {{ overdueDays(task.dueDate) }}
+                  {{
+                    overdueDays(task.dueDate) === 1
+                      ? 'day overdue'
+                      : 'days overdue'
+                  }}
+                </span>
+
+                <a
+                  mat-stroked-button
+                  [routerLink]="['/tasks', task.id]">
+                  View Task
+                </a>
+
+              </div>
+
+            </article>
+
+          }
+
+        </div>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
 </div>

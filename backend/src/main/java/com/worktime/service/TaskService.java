@@ -80,6 +80,42 @@ public class TaskService {
                 .toList();
     }
 
+    public List<TaskResponse> getOverdueTasks(
+            String email
+    ) {
+        User currentUser = getCurrentUser(email);
+
+        LocalDate today = LocalDate.now();
+
+        List<TaskStatus> openStatuses = List.of(
+                TaskStatus.TODO,
+                TaskStatus.IN_PROGRESS
+        );
+
+        List<Task> overdueTasks;
+
+        if (currentUser.isAdmin()) {
+            overdueTasks =
+                    taskRepository
+                            .findByDueDateBeforeAndStatusInOrderByDueDateAsc(
+                                    today,
+                                    openStatuses
+                            );
+        } else {
+            overdueTasks =
+                    taskRepository
+                            .findByAssignedUserAndDueDateBeforeAndStatusInOrderByDueDateAsc(
+                                    currentUser,
+                                    today,
+                                    openStatuses
+                            );
+        }
+
+        return overdueTasks.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public TaskResponse getTaskById(Long id, String email){
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));

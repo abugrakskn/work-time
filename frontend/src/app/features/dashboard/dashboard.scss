@@ -1,0 +1,200 @@
+:host {
+  display: block;
+}
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.overdue-section {
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b91c1c;
+  background: #fee2e2;
+  border-radius: 12px;
+}
+
+mat-card-content {
+  padding-top: 24px;
+}
+
+.state-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 160px;
+  color: #64748b;
+}
+
+.success-state {
+  color: #166534;
+}
+
+.success-state mat-icon {
+  color: #16a34a;
+}
+
+.success-state div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.success-state span {
+  color: #64748b;
+}
+
+.section-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #7f1d1d;
+}
+
+.overdue-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  color: #ffffff;
+  background: #dc2626;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.overdue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overdue-task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px;
+  background: #fffafa;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+}
+
+.task-main {
+  min-width: 0;
+}
+
+.task-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-title {
+  overflow: hidden;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-title:hover {
+  color: #2563eb;
+}
+
+.priority {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.priority-medium {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.priority-high {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.task-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.task-metadata span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.task-metadata mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.overdue-information {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.overdue-label {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .overdue-task {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .overdue-information {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
