@@ -4,7 +4,6 @@ import com.worktime.dto.task.CreateTaskRequest;
 import com.worktime.dto.task.TaskResponse;
 import com.worktime.dto.task.UpdateTaskRequest;
 import com.worktime.dto.task.UpdateTaskStatusRequest;
-import com.worktime.repository.UserRepository;
 import com.worktime.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,14 +23,9 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
-    private final UserRepository userRepository;
 
-    public TaskController(
-            TaskService taskService,
-            UserRepository userRepository
-    ){
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping
