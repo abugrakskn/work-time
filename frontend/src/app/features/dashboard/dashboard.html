@@ -7,6 +7,150 @@
     </div>
   </header>
 
+  <section class="summary-grid">
+
+    <mat-card class="summary-card today-card">
+
+      <div class="summary-icon">
+        <mat-icon>today</mat-icon>
+      </div>
+
+      <div class="summary-content">
+        <span class="summary-label">
+          Today
+        </span>
+
+        <strong class="summary-value">
+          {{
+            isLoading()
+              ? '—'
+              : formatDuration(
+                  dailySummary()
+                    ?.totalDurationMinutes ?? 0
+                )
+          }}
+        </strong>
+
+        <span class="summary-description">
+          Tracked time
+        </span>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card week-card">
+
+      <div class="summary-icon">
+        <mat-icon>date_range</mat-icon>
+      </div>
+
+      <div class="summary-content">
+        <span class="summary-label">
+          This Week
+        </span>
+
+        <strong class="summary-value">
+          {{
+            isLoading()
+              ? '—'
+              : formatDuration(
+                  weeklySummary()
+                    ?.totalDurationMinutes ?? 0
+                )
+          }}
+        </strong>
+
+        <span class="summary-description">
+          Tracked time
+        </span>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card overdue-card">
+
+      <div class="summary-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
+
+      <div class="summary-content">
+        <span class="summary-label">
+          Overdue Tasks
+        </span>
+
+        <strong class="summary-value">
+          {{
+            isLoading()
+              ? '—'
+              : overdueTasks().length
+          }}
+        </strong>
+
+        <span class="summary-description">
+          Requires attention
+        </span>
+      </div>
+
+    </mat-card>
+
+    <mat-card
+      class="summary-card timer-card"
+      [class.timer-running]="activeTimeEntry()">
+
+      <div class="summary-icon">
+        <mat-icon>
+          {{
+            activeTimeEntry()
+              ? 'timer'
+              : 'timer_off'
+          }}
+        </mat-icon>
+      </div>
+
+      <div class="summary-content active-timer-content">
+
+        <span class="summary-label">
+          Active Timer
+        </span>
+
+        @if (isLoading()) {
+
+          <strong class="summary-value">
+            —
+          </strong>
+
+        } @else if (activeTimeEntry(); as timeEntry) {
+
+          <strong class="active-task-title">
+            {{ timeEntry.taskTitle }}
+          </strong>
+
+          <a
+            class="timer-link"
+            routerLink="/time-entries">
+            View timer
+          </a>
+
+        } @else {
+
+          <strong class="timer-status">
+            Not running
+          </strong>
+
+          <a
+            class="timer-link"
+            routerLink="/time-entries">
+            Start timer
+          </a>
+
+        }
+
+      </div>
+
+    </mat-card>
+
+  </section>
+
   <mat-card class="overdue-section">
 
     <mat-card-header>
@@ -43,7 +187,9 @@
 
           <div>
             <strong>No overdue tasks</strong>
-            <span>Everything is currently on schedule.</span>
+            <span>
+              Everything is currently on schedule.
+            </span>
           </div>
         </div>
 

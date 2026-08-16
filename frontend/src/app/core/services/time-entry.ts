@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
+import { HttpParams } from '@angular/common/http';
+
 import { API_BASE_URL } from '../config/api.config';
 import {
   CreateManualTimeEntryRequest
@@ -9,6 +11,7 @@ import {
   StartTimeEntryRequest
 } from '../models/start-time-entry-request';
 import { TimeEntry } from '../models/time-entry';
+import { TimeSummary } from '../models/time-summary';
 
 @Injectable({
   providedIn: 'root'
@@ -54,4 +57,24 @@ export class TimeEntryService {
       request
     );
   }
+
+  getDailySummary(date: string) {
+  const params = new HttpParams()
+    .set('date', date);
+
+  return this.http.get<TimeSummary>(
+    `${this.apiUrl}/summary/daily`,
+    { params }
+  );
+}
+
+getWeeklySummary(date: string) {
+  const params = new HttpParams()
+    .set('date', date);
+
+  return this.http.get<TimeSummary>(
+    `${this.apiUrl}/summary/weekly`,
+    { params }
+  );
+}
 }
