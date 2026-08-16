@@ -22,6 +22,120 @@
   color: #6b7280;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  min-height: 130px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border-radius: 14px;
+}
+
+.summary-icon mat-icon {
+  width: 26px;
+  height: 26px;
+  font-size: 26px;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.summary-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.summary-value {
+  margin-top: 5px;
+  color: #111827;
+  font-size: 26px;
+  font-weight: 750;
+}
+
+.summary-description {
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.week-card .summary-icon {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.overdue-card .summary-icon {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.timer-card .summary-icon {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.timer-card.timer-running {
+  border-color: #86efac;
+}
+
+.timer-card.timer-running .summary-icon {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.active-timer-content {
+  gap: 4px;
+}
+
+.active-task-title,
+.timer-status {
+  overflow: hidden;
+  margin-top: 4px;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timer-link {
+  width: fit-content;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.timer-link:hover {
+  text-decoration: underline;
+}
+
 .overdue-section {
   border: 1px solid #fecaca;
   border-radius: 16px;
@@ -187,6 +301,12 @@ mat-card-content {
   white-space: nowrap;
 }
 
+@media (max-width: 1050px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 760px) {
   .overdue-task {
     align-items: flex-start;
@@ -196,5 +316,11 @@ mat-card-content {
   .overdue-information {
     justify-content: space-between;
     width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
   }
 }
