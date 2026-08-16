@@ -1,5 +1,6 @@
 package com.worktime.repository;
 
+import com.worktime.entity.Project;
 import com.worktime.entity.Task;
 import com.worktime.entity.TimeEntry;
 import com.worktime.entity.User;
@@ -35,6 +36,37 @@ public interface TimeEntryRepository
           AND timeEntry.durationMinutes IS NOT NULL
         """)
     Long calculateTotalDurationMinutes(
+            @Param("user") User user,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTimeExclusive")
+            LocalDateTime endTimeExclusive
+    );
+
+    @Query("""
+        SELECT timeEntry
+        FROM TimeEntry timeEntry
+        WHERE timeEntry.task.project = :project
+          AND timeEntry.startTime >= :startTime
+          AND timeEntry.startTime < :endTimeExclusive
+          AND timeEntry.durationMinutes IS NOT NULL
+        ORDER BY timeEntry.startTime DESC
+        """)
+    List<TimeEntry> findCompletedByProjectAndDateRange(
+            @Param("project")Project project,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTimeExclusive") LocalDateTime endTimeExclusive
+            );
+
+    @Query("""
+        SELECT timeEntry
+        FROM TimeEntry timeEntry
+        WHERE timeEntry.user = :user
+          AND timeEntry.startTime >= :startTime
+          AND timeEntry.startTime < :endTimeExclusive
+          AND timeEntry.durationMinutes IS NOT NULL
+        ORDER BY timeEntry.startTime DESC
+        """)
+    List<TimeEntry> findCompletedByUserAndDateRange(
             @Param("user") User user,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTimeExclusive")

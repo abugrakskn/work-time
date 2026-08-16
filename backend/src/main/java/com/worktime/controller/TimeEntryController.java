@@ -1,9 +1,6 @@
 package com.worktime.controller;
 
-import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
-import com.worktime.dto.timeentry.StartTimeEntryRequest;
-import com.worktime.dto.timeentry.TimeEntryResponse;
-import com.worktime.dto.timeentry.TimeSummaryResponse;
+import com.worktime.dto.timeentry.*;
 import com.worktime.service.TimeEntryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,6 +114,101 @@ public class TimeEntryController {
                 timeEntryService.getWeeklySummary(
                         authentication.getName(),
                         date
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/reports/projects/{projectId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Get project time report",
+            description = "Returns completed time entries and total duration for a project within the specified date range."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Project report returned successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid or missing date range"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication required"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Administrator role required"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Project not found"
+            )
+    })
+    public ResponseEntity<ProjectTimeReportResponse>
+    getProjectReport(
+            @PathVariable Long projectId,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate
+    ) {
+        ProjectTimeReportResponse response =
+                timeEntryService.getProjectReport(
+                        projectId,
+                        startDate,
+                        endDate
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/reports/users/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Get user time report",
+            description = "Returns completed time entries and total duration for a user within the specified date range."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User report returned successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid or missing date range"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication required"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Administrator role required"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    public ResponseEntity<UserTimeReportResponse> getUserReport(
+            @PathVariable Long userId,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate
+    ) {
+        UserTimeReportResponse response =
+                timeEntryService.getUserReport(
+                        userId,
+                        startDate,
+                        endDate
                 );
 
         return ResponseEntity.ok(response);
