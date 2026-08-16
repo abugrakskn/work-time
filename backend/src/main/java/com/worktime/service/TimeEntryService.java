@@ -1,15 +1,10 @@
 package com.worktime.service;
 
-import com.worktime.dto.timeentry.CreateManualTimeEntryRequest;
-import com.worktime.dto.timeentry.StartTimeEntryRequest;
-import com.worktime.dto.timeentry.TimeEntryResponse;
-import com.worktime.dto.timeentry.TimeSummaryResponse;
-import com.worktime.entity.Task;
-import com.worktime.entity.TaskStatus;
-import com.worktime.entity.TimeEntry;
-import com.worktime.entity.User;
+import com.worktime.dto.timeentry.*;
+import com.worktime.entity.*;
 import com.worktime.exception.ResourceConflictException;
 import com.worktime.exception.ResourceNotFoundException;
+import com.worktime.repository.ProjectRepository;
 import com.worktime.repository.TimeEntryRepository;
 import com.worktime.repository.TaskRepository;
 import com.worktime.repository.UserRepository;
@@ -33,6 +28,7 @@ public class TimeEntryService {
     private final TimeEntryRepository timeEntryRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
 
     @Transactional
     public TimeEntryResponse startTimer(
@@ -181,6 +177,116 @@ public class TimeEntryService {
         long totalDurationMinutes = timeEntryRepository
                 .calculateTotalDurationMinutes(user, startTime, endTimeExclusive);
         return new TimeSummaryResponse(weekStart, weekEnd, totalDurationMinutes);
+    }
+
+    @Transactional(readOnly = true)
+    public ProjectTimeReportResponse getProjectReport(
+            Long projectId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        validateDateRange(startDate, endDate);
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Project not found!"
+                        )
+                );
+
+        LocalDateTime startTime =
+                startDate.atStartOfDay();
+
+        LocalDateTime endTimeExclusive =
+                endDate.plusDays(1).atStartOfDay();
+
+        List<TimeEntryResponse> timeEntries =
+                timeEntryRepository
+                        .findCompletedByProjectAndDateRange(
+                                project,
+                                startTime,
+                                endTimeExclusive
+                        )
+                        .stream()
+                        .map(this::toResponse)
+                        .toList();
+
+        long totalDurationMinutes = timeEntries.stream()
+                .map(TimeEntryResponse::durationMinutes)
+                .mapToLong(Integer::longValue)
+                .sum();
+
+        return new ProjectTimeReportResponse(
+                project.getId(),
+                project.getName(),
+                startDate,
+                endDate,
+                totalDurationMinutes,
+                timeEntries
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public UserTimeReportResponse getUserReport(
+            Long userId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        validateDateRange(startDate, endDate);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found!"
+                        )
+                );
+
+        LocalDateTime startTime =
+                startDate.atStartOfDay();
+
+        LocalDateTime endTimeExclusive =
+                endDate.plusDays(1).atStartOfDay();
+
+        List<TimeEntryResponse> timeEntries =
+                timeEntryRepository
+                        .findCompletedByUserAndDateRange(
+                                user,
+                                startTime,
+                                endTimeExclusive
+                        )
+                        .stream()
+                        .map(this::toResponse)
+                        .toList();
+
+        long totalDurationMinutes = timeEntries.stream()
+                .map(TimeEntryResponse::durationMinutes)
+                .mapToLong(Integer::longValue)
+                .sum();
+
+        String userName =
+                user.getFirstName()
+                        + " "
+                        + user.getLastName();
+
+        return new UserTimeReportResponse(
+                user.getId(),
+                userName,
+                startDate,
+                endDate,
+                totalDurationMinutes,
+                timeEntries
+        );
+    }
+
+    private void validateDateRange(
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException(
+                    "End date must be on or after start date."
+            );
+        }
     }
 
     private TimeEntryResponse toResponse(TimeEntry timeEntry) {
