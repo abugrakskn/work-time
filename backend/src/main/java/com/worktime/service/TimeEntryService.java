@@ -13,10 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +26,7 @@ public class TimeEntryService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final Clock clock;
 
     @Transactional
     public TimeEntryResponse startTimer(
@@ -56,7 +54,7 @@ public class TimeEntryService {
         TimeEntry timeEntry = TimeEntry.builder()
                 .user(user)
                 .task(task)
-                .startTime(LocalDateTime.now())
+                .startTime(LocalDateTime.now(clock))
                 .description(request.getDescription())
                 .build();
 
@@ -73,7 +71,7 @@ public class TimeEntryService {
                 .findByUserAndEndTimeIsNull(user)
                 .orElseThrow(() -> new ResourceConflictException("User does not have an active time entry."));
 
-        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTime.now(clock);
         long durationMinutes = Duration.between(
                 activeTimeEntry.getStartTime(),
                 endTime
@@ -101,7 +99,7 @@ public class TimeEntryService {
 
         LocalDateTime startTime = request.getStartTime();
         LocalDateTime endTime = request.getEndTime();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         if (!endTime.isAfter(startTime)) {
             throw new IllegalArgumentException("End time must be after start time.");
         }
