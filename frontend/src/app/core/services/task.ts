@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { Task } from '../models/task';
+import {
+  TaskStatusHistory
+} from '../models/task-status-history';
 
 import { CreateTaskRequest } from '../models/create-task-request';
 import { UpdateTaskRequest } from '../models/update-task-request';
@@ -32,6 +35,12 @@ export class TaskService {
       `${this.apiUrl}/${id}`
     );
   }
+
+  getStatusHistory(id: number) {
+  return this.http.get<TaskStatusHistory[]>(
+    `${this.apiUrl}/${id}/status-history`
+  );
+}
 
   create(request: CreateTaskRequest) {
     return this.http.post<Task>(
