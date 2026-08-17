@@ -678,6 +678,20 @@ mat-card-content {
     box-sizing: border-box;
   }
 
+  .chart-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+  .chart-actions {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.chart-actions button {
+  width: 100%;
+}
+
   .chart-total {
     align-items: flex-start;
   }

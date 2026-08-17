@@ -8,6 +8,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
+import { downloadCsv } from '../../core/utils/csv.utils';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -171,6 +172,38 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.loadDashboardData();
   }
+
+  protected exportChartCsv(): void {
+  if (
+    this.isChartRangeInvalid()
+    || this.isLoading()
+  ) {
+    return;
+  }
+
+  const rows: Array<
+    Array<string | number>
+  > = [
+    [
+      'Date',
+      'Duration Minutes'
+    ],
+    ...this.chartData().map((dataPoint) => [
+      dataPoint.date,
+      dataPoint.durationMinutes
+    ]),
+    [
+      'Total',
+      this.chartTotalMinutes()
+    ]
+  ];
+
+  const fileName =
+    `time-report_${this.chartStartDate()}`
+    + `_to_${this.chartEndDate()}.csv`;
+
+  downloadCsv(fileName, rows);
+}
 
   protected formatDuration(
     durationMinutes: number
