@@ -1,20 +1,20 @@
 package com.worktime.service;
 
-import com.worktime.dto.task.CreateTaskRequest;
-import com.worktime.dto.task.TaskResponse;
-import com.worktime.dto.task.UpdateTaskRequest;
-import com.worktime.dto.task.UpdateTaskStatusRequest;
+import com.worktime.dto.task.*;
 import com.worktime.entity.*;
 import com.worktime.exception.ResourceNotFoundException;
 import com.worktime.repository.ProjectRepository;
 import com.worktime.repository.TaskRepository;
+import com.worktime.repository.TaskStatusHistoryRepository;
 import com.worktime.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +24,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final TaskStatusHistoryRepository taskStatusHistoryRepository;
 
     private User getCurrentUser(String email){
         return userRepository.findByEmailIgnoreCase(email)
@@ -130,17 +131,66 @@ public class TaskService {
         throw new AccessDeniedException("You do not have permission to access this task");
     }
 
-    public TaskResponse updateTask(Long id, UpdateTaskRequest request){
+    @Transactional(readOnly = true)
+    public List<TaskStatusHistoryResponse>
+    getTaskStatusHistory(
+            Long taskId,
+            String email
+    ) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Task not found!"
+                        )
+                );
+
+        User currentUser = getCurrentUser(email);
+
+        if (
+                !currentUser.isAdmin()
+                        && !task.isAssignedTo(currentUser)
+        ) {
+            throw new AccessDeniedException(
+                    "You do not have permission to access this task history."
+            );
+        }
+
+        return taskStatusHistoryRepository
+                .findByTaskOrderByChangedAtDesc(task)
+                .stream()
+                .map(this::toHistoryResponse)
+                .toList();
+    }
+
+    @Transactional
+    public TaskResponse updateTask(
+            Long id,
+            String email,
+            UpdateTaskRequest request
+    ) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Task not found!"
+                        )
+                );
+
+        User currentUser = getCurrentUser(email);
+
+        TaskStatus previousStatus = task.getStatus();
 
         validateDueDateForUpdate(
                 task,
                 request.getDueDate()
         );
 
-        Project project = projectRepository.findById(request.getProjectId())
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found!"));
+        Project project = projectRepository
+                .findById(request.getProjectId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Project not found!"
+                        )
+                );
 
         boolean projectChanged =
                 !task.getProject()
@@ -158,22 +208,33 @@ public class TaskService {
 
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
-        task.setEstimatedDurationMinutes(request.getEstimatedDurationMinutes());
+        task.setEstimatedDurationMinutes(
+                request.getEstimatedDurationMinutes()
+        );
         task.setPriority(request.getPriority());
         task.setDueDate(request.getDueDate());
         task.setStatus(request.getStatus());
-
         task.setProject(project);
 
         task.setAssignedUser(
-                resolveAssignedUser(request.getAssignedUserId())
+                resolveAssignedUser(
+                        request.getAssignedUserId()
+                )
         );
 
         Task updatedTask = taskRepository.save(task);
 
+        recordStatusChange(
+                updatedTask,
+                previousStatus,
+                request.getStatus(),
+                currentUser
+        );
+
         return toResponse(updatedTask);
     }
 
+    @Transactional
     public TaskResponse updateTaskStatus(Long id, String email, UpdateTaskStatusRequest request){
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
@@ -185,8 +246,19 @@ public class TaskService {
             );
         }
 
-        task.setStatus(request.getStatus());
+        TaskStatus previousStatus = task.getStatus();
+        TaskStatus newStatus = request.getStatus();
+        if (previousStatus == newStatus) {
+            return toResponse(task);
+        }
+        task.setStatus(newStatus);
         Task updatedTask = taskRepository.save(task);
+        recordStatusChange(
+                updatedTask,
+                previousStatus,
+                newStatus,
+                currentUser
+        );
         return toResponse(updatedTask);
     }
 
@@ -252,6 +324,48 @@ public class TaskService {
         }
 
         return user;
+    }
+
+    private TaskStatusHistoryResponse toHistoryResponse(
+            TaskStatusHistory history
+    ) {
+        User changedBy = history.getChangedBy();
+
+        String changedByUserName =
+                changedBy.getFirstName()
+                        + " "
+                        + changedBy.getLastName();
+
+        return new TaskStatusHistoryResponse(
+                history.getId(),
+                history.getPreviousStatus(),
+                history.getNewStatus(),
+                changedBy.getId(),
+                changedByUserName,
+                history.getChangedAt()
+        );
+    }
+
+    private void recordStatusChange(
+            Task task,
+            TaskStatus previousStatus,
+            TaskStatus newStatus,
+            User changedBy
+    ) {
+        if (previousStatus == newStatus) {
+            return;
+        }
+
+        TaskStatusHistory history =
+                TaskStatusHistory.builder()
+                        .task(task)
+                        .previousStatus(previousStatus)
+                        .newStatus(newStatus)
+                        .changedBy(changedBy)
+                        .changedAt(LocalDateTime.now())
+                        .build();
+
+        taskStatusHistoryRepository.save(history);
     }
 
     private TaskResponse toResponse(Task task){

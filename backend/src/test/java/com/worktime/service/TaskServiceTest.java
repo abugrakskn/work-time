@@ -13,6 +13,7 @@ import com.worktime.entity.UserRole;
 import com.worktime.exception.ResourceNotFoundException;
 import com.worktime.repository.ProjectRepository;
 import com.worktime.repository.TaskRepository;
+import com.worktime.repository.TaskStatusHistoryRepository;
 import com.worktime.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,10 @@ class TaskServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
+
+    @Mock
+    private TaskStatusHistoryRepository
+            taskStatusHistoryRepository;
 
     @Mock
     private ProjectRepository projectRepository;
