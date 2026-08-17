@@ -312,13 +312,31 @@
 
       </div>
 
-      <div class="chart-total">
-        <span>Selected Total</span>
+      <div class="chart-actions">
 
-        <strong>
-          {{ formatDuration(chartTotalMinutes()) }}
-        </strong>
-      </div>
+  <div class="chart-total">
+    <span>Selected Total</span>
+
+    <strong>
+      {{ formatDuration(chartTotalMinutes()) }}
+    </strong>
+  </div>
+
+  <button
+    mat-stroked-button
+    type="button"
+    [disabled]="
+      isLoading()
+      || isChartRangeInvalid()
+    "
+    (click)="exportChartCsv()">
+
+    <mat-icon>download</mat-icon>
+    Export CSV
+
+  </button>
+
+</div>
 
     </div>
 
