@@ -1,13 +1,25 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal
+} from '@angular/core';
+import {
+  ActivatedRoute,
+  RouterLink
+} from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Task } from '../../../core/models/task';
-import { TaskService } from '../../../core/services/task';
+import {
+  TaskStatusHistory
+} from '../../../core/models/task-status-history';
+
 import { AuthService } from '../../../core/services/auth';
+import { TaskService } from '../../../core/services/task';
 
 @Component({
   selector: 'app-task-detail',
@@ -26,23 +38,31 @@ export class TaskDetail implements OnInit {
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
 
-  protected readonly currentUser = this.authService.currentUser;
+  protected readonly currentUser =
+    this.authService.currentUser;
 
-  task = signal<Task | null>(null);
+  protected readonly isAdmin =
+    this.authService.isAdmin;
 
-  ngOnInit() {
+  protected readonly task =
+    signal<Task | null>(null);
+
+  protected readonly statusHistory =
+    signal<TaskStatusHistory[]>([]);
+
+  protected readonly isHistoryLoading =
+    signal(false);
+
+  ngOnInit(): void {
     const id = Number(
       this.route.snapshot.paramMap.get('id')
     );
 
-    this.taskService.getById(id).subscribe({
-      next: (task) => {
-        this.task.set(task);
-      },
-      error: (err) => {
-        console.error('Task could not be loaded.', err);
-      }
-    });
+    this.loadTask(id);
+
+    if (this.isAdmin()) {
+      this.loadStatusHistory(id);
+    }
   }
 
   protected canEditTask(task: Task): boolean {
@@ -56,7 +76,7 @@ export class TaskDetail implements OnInit {
       || task.assignedUserId === user.id;
   }
 
-  getStatusClass(status: string): string {
+  protected getStatusClass(status: string): string {
     switch (status) {
       case 'TODO':
         return 'status-todo';
@@ -71,7 +91,9 @@ export class TaskDetail implements OnInit {
     }
   }
 
-  getPriorityClass(priority: string): string {
+  protected getPriorityClass(
+    priority: string
+  ): string {
     switch (priority) {
       case 'LOW':
         return 'priority-low';
@@ -84,5 +106,48 @@ export class TaskDetail implements OnInit {
       default:
         return 'priority-default';
     }
+  }
+
+  protected formatStatus(status: string): string {
+    return status.replaceAll('_', ' ');
+  }
+
+  protected formatDateTime(value: string): string {
+    return new Date(value).toLocaleString();
+  }
+
+  private loadTask(id: number): void {
+    this.taskService.getById(id).subscribe({
+      next: (task) => {
+        this.task.set(task);
+      },
+      error: (err) => {
+        console.error(
+          'Task could not be loaded.',
+          err
+        );
+      }
+    });
+  }
+
+  private loadStatusHistory(id: number): void {
+    this.isHistoryLoading.set(true);
+
+    this.taskService
+      .getStatusHistory(id)
+      .subscribe({
+        next: (history) => {
+          this.statusHistory.set(history);
+          this.isHistoryLoading.set(false);
+        },
+        error: (err) => {
+          this.isHistoryLoading.set(false);
+
+          console.error(
+            'Task status history could not be loaded.',
+            err
+          );
+        }
+      });
   }
 }
