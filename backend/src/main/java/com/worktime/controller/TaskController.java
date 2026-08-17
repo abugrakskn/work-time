@@ -1,9 +1,6 @@
 package com.worktime.controller;
 
-import com.worktime.dto.task.CreateTaskRequest;
-import com.worktime.dto.task.TaskResponse;
-import com.worktime.dto.task.UpdateTaskRequest;
-import com.worktime.dto.task.UpdateTaskStatusRequest;
+import com.worktime.dto.task.*;
 import com.worktime.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,6 +66,27 @@ public class TaskController {
         return taskService.getTaskById(id, authentication.getName());
     }
 
+    @GetMapping("/{id}/status-history")
+    @Operation(summary = "Get task status history",
+            description = "Returns status changes for a task ordered from newest to oldest.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Task status history retrieved successfully"),
+            @ApiResponse(responseCode = "401",
+                    description = "Authentication required"),
+            @ApiResponse(responseCode = "403",
+                    description = "User does not have permission to access this task history"),
+            @ApiResponse(responseCode = "404",
+                    description = "Task not found")
+    })
+    public List<TaskStatusHistoryResponse>
+    getTaskStatusHistory(@PathVariable Long id, Authentication authentication) {
+        return taskService.getTaskStatusHistory(
+                id,
+                authentication.getName()
+        );
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new task",
@@ -96,9 +114,14 @@ public class TaskController {
     })
     public TaskResponse updateTask(
             @PathVariable Long id,
+            Authentication authentication,
             @Valid @RequestBody UpdateTaskRequest request
     ) {
-        return taskService.updateTask(id, request);
+        return taskService.updateTask(
+                id,
+                authentication.getName(),
+                request
+        );
     }
 
     @PatchMapping("/{id}/status")
